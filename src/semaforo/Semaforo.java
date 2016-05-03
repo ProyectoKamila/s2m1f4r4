@@ -55,14 +55,12 @@ import java.sql.ResultSet;
 
 import semaforo.LogFile;
 
-
-
 /**
  *
  * @author fernando
  */
 public class Semaforo extends javax.swing.JFrame {
-    
+
     public static Boolean isDebugMode = false;
     public Boolean isDBCapitalLeida = false;
     public int lecturasCapital = 0;
@@ -104,8 +102,8 @@ public class Semaforo extends javax.swing.JFrame {
     Timer timer = null;
 
     private static final Color[] colors = new Color[]{
-        new Color(0, 130, 0),   // Green
-        new Color(80, 190, 0),  // Light Green
+        new Color(0, 130, 0), // Green
+        new Color(80, 190, 0), // Light Green
         new Color(110, 180, 0), // Yellow
         new Color(150, 170, 0), // Light Yellow
         // VERDES HASTA ACA
@@ -114,7 +112,7 @@ public class Semaforo extends javax.swing.JFrame {
         new Color(198, 89, 17), // Brown
         new Color(255, 70, 70), // Red
         new Color(255, 40, 40), // Red CLARO
-        new Color(255, 0, 0),   // Red
+        new Color(255, 0, 0), // Red
         new Color(255, 255, 50)
     };
 
@@ -128,7 +126,7 @@ public class Semaforo extends javax.swing.JFrame {
      */
     int Mcol = 0;
     int Mrow = 0;
-    
+
     Long tiempoInicio; // Inicio de Ejecucion del Programa
     Boolean recomentacionHecha = false;
     int cuenta = 0;
@@ -137,7 +135,7 @@ public class Semaforo extends javax.swing.JFrame {
 
         semaforo.LogFile.logFile("");
         semaforo.LogFile.logFile("************** Inicio ejecucion semaforo ****************");
-        
+
         tiempoInicio = System.currentTimeMillis();  // Inicio de Ejecucion del Programa
         initComponents();                           // Inicializa los componentes de Swing
         setUp();                                    // Inicia el setup de la aplicacion
@@ -146,20 +144,19 @@ public class Semaforo extends javax.swing.JFrame {
         ajustaDetallesFrame();                      // Modificacion de bordes y otros elementos de look and feel
         syncScroll();                               // Crea los listeners para la sincronizacion del Scroll
         hiloConsultaIndices();                      // Carga los valores e imagenes de indices de Yahoo Financials
-       
-       /*oculto las consulta de indices*/ 
-       jLabel5.setVisible(false);
-       jLabelSemaforo.setVisible(false);
-       jLabelImagenNASDAQ.setVisible(false);
-       jLabelImagenSandP.setVisible(false);
-       jLabelImagenDJI.setVisible(false);
-      
-       /*oculto label de jLabelNumPos*/
-       jLabelNumPos.setVisible(false);
-        
-        
+
+        /*oculto las consulta de indices*/
+        jLabel5.setVisible(false);
+        jLabelSemaforo.setVisible(false);
+        jLabelImagenNASDAQ.setVisible(false);
+        jLabelImagenSandP.setVisible(false);
+        jLabelImagenDJI.setVisible(false);
+
+        /*oculto label de jLabelNumPos*/
+        jLabelNumPos.setVisible(false);
+        jLabelPositionNum.setVisible(false);
+
     }
-    
 
     public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer {
 
@@ -288,59 +285,58 @@ public class Semaforo extends javax.swing.JFrame {
                 if (column > 0) {
                     if (column <= 4 & index == 0) {
 
-                       // if (((System.currentTimeMillis() - tiempoInicio) > timerRecomendaciones) & (cuenta < 200)) {
-
-                            for (int i = 1; i < 5; i++) {
-                                //if (i != column)
-                                {
-                                    table.setValueAt("", row, i);
-                                }
+                        // if (((System.currentTimeMillis() - tiempoInicio) > timerRecomendaciones) & (cuenta < 200)) {
+                        for (int i = 1; i < 5; i++) {
+                            //if (i != column)
+                            {
+                                table.setValueAt("", row, i);
                             }
+                        }
 
-                            cellComponent.setForeground(Color.RED.darker());
+                        cellComponent.setForeground(Color.RED.darker());
 
 //########################################
 //$$$ ESTA ES LA RECOMENDACION
-                            valorCFD = 0.0;
-                            valorDiferencia = 0.0;
-                            String tempStrValCFD = "";
-                            String tempStrValPosicion = "";
-                            try {
+                        valorCFD = 0.0;
+                        valorDiferencia = 0.0;
+                        String tempStrValCFD = "";
+                        String tempStrValPosicion = "";
+                        try {
 
-                                //CFD
-                                tempStrValCFD = TableTicker.getModel().getValueAt(row, 3).toString().replace(",", ".");
+                            //CFD
+                            tempStrValCFD = TableTicker.getModel().getValueAt(row, 3).toString().replace(",", ".");
 
-                                //POSICION
-                                Object obj;
-                                obj = TableTicker.getModel().getValueAt(row, 4); //.toString().replace(",", ".");
+                            //POSICION
+                            Object obj;
+                            obj = TableTicker.getModel().getValueAt(row, 4); //.toString().replace(",", ".");
 
-                                if (!tempStrValCFD.isEmpty()) {
+                            if (!tempStrValCFD.isEmpty()) {
 
-                                    valorCFD = Double.parseDouble(tempStrValCFD);
+                                valorCFD = Double.parseDouble(tempStrValCFD);
 
-                                    //RECOMENDACION
-                                    division = porcentajes[column - 1 ] * (1.0 * valorCFD) / 100;
+                                //RECOMENDACION
+                                division = porcentajes[column - 1] * (1.0 * valorCFD) / 100;
 
-                                    if (obj != null) {
-                                        tempStrValPosicion = obj.toString().replace(",", ".");
+                                if (obj != null) {
+                                    tempStrValPosicion = obj.toString().replace(",", ".");
 
-                                        if (!tempStrValPosicion.isEmpty()) {
-                                            division -= Double.parseDouble(tempStrValPosicion);
-                                        }
-
+                                    if (!tempStrValPosicion.isEmpty()) {
+                                        division -= Double.parseDouble(tempStrValPosicion);
                                     }
-
-                                    if (division < 0) {
-                                        division = 0.0;
-                                    }
-
-                                    table.setValueAt(division.intValue(), row, column);
 
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
+
+                                if (division < 0) {
+                                    division = 0.0;
+                                }
+
+                                table.setValueAt(division.intValue(), row, column);
+
                             }
-                       // }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        // }
 
                     }
 
@@ -349,10 +345,8 @@ public class Semaforo extends javax.swing.JFrame {
                 } else {
                     cellComponent.setBackground(colors[0]);
                 }
-            } else {
-                    if ( index == 0 && column > 0 && (cellComponent.getBackground().equals(colorImparCeldaWeeks) || cellComponent.getBackground().equals(colorParCeldaWeeks)) ) {                    
-                    table.setValueAt("", row, column); 
-                }
+            } else if (index == 0 && column > 0 && (cellComponent.getBackground().equals(colorImparCeldaWeeks) || cellComponent.getBackground().equals(colorParCeldaWeeks))) {
+                table.setValueAt("", row, column);
             }
 
             ((JComponent) cellComponent).setBorder(b);
@@ -390,48 +384,46 @@ public class Semaforo extends javax.swing.JFrame {
         }
     }
 
-
 //############################################################
 //                         UPDATE PANEL SEMAFORO
 //############################################################
-
     public void updatePanelSemaforo() {
-        
-        if (semaforo.Semaforo.isDebugMode) System.out.println("* * * * * * * * * * * * * UPDATE PANEL SEMAFORO * * * * * * * * * * * * * *");
-        if (semaforo.Semaforo.isDebugMode) System.out.println("");
-        
+
+        if (semaforo.Semaforo.isDebugMode) {
+            System.out.println("* * * * * * * * * * * * * UPDATE PANEL SEMAFORO * * * * * * * * * * * * * *");
+        }
+        if (semaforo.Semaforo.isDebugMode) {
+            System.out.println("");
+        }
+
         try {
-            
+
             /*Verifico el numero de posiciones para dar color al circulo*/
             int NumPos = Controller.getSettings().getNumPos();
-            if(NumPos<10){
+            if (NumPos < 10) {
                 jLabelPositionNum.setIcon(new javax.swing.ImageIcon(getClass().getResource("/semaforo/resources/verde.png")));
-                jLabelPositionNum.setText(""+NumPos+"");
+                jLabelPositionNum.setText("" + NumPos + "");
             }
-            if(NumPos>=10 && NumPos<12){
+            if (NumPos >= 10 && NumPos < 12) {
                 jLabelPositionNum.setIcon(new javax.swing.ImageIcon(getClass().getResource("/semaforo/resources/amarillo.png")));
-                jLabelPositionNum.setText(""+NumPos+"");
+                jLabelPositionNum.setText("" + NumPos + "");
             }
-            if(NumPos>=12){
+            if (NumPos >= 12) {
                 jLabelPositionNum.setIcon(new javax.swing.ImageIcon(getClass().getResource("/semaforo/resources/rojo.png")));
-                jLabelPositionNum.setText(""+NumPos+"");
+                jLabelPositionNum.setText("" + NumPos + "");
             }
-            
+            jLabelPositionNum.setVisible(true);
             /*jLabelNumPos.setText("" + Controller.getSettings().getNumPos());*/
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         jLabelInvested.setText("" + String.format("%.2f", Controller.getSettings().getPorcentCapital()) + " %");
 
-
 //############################################################
 //                         POSICIONES
 //############################################################
-
-        
-        
         kobytest.KobyTest.posiciones();
         kobytest.KobyTest.miPortfolioUpdates();
 
@@ -493,8 +485,8 @@ public class Semaforo extends javax.swing.JFrame {
                     int capital = 0;
                     Object obje = null;
 
-                    String columnsTitle[] = {"Ticker", "Price", "To Invest", "CFD", "Bought", "Remain"};
-                    Object rows[][] = new Object[settings.getTickers().size()][6];
+                    String columnsTitle[] = {"Ticker", "Price", "To Invest", "CFD", "Bought", "Remain", "Hedge"};
+                    Object rows[][] = new Object[settings.getTickers().size()][7];
                     //int size = TableTicker.getRowCount();
                     int fila = 0;
 
@@ -528,9 +520,15 @@ public class Semaforo extends javax.swing.JFrame {
 
                                     if ((elemCapitalDB != null) && !(valoresTickerCapital.get(ticker.getName()).isChequeado)) {
 
-                                        if (semaforo.Semaforo.isDebugMode) System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Lectura de DDBB  " + elemCapitalDB);
-                                        if (semaforo.Semaforo.isDebugMode) System.out.println("");
-                                        if (semaforo.Semaforo.isDebugMode) System.out.println("");
+                                        if (semaforo.Semaforo.isDebugMode) {
+                                            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Lectura de DDBB  " + elemCapitalDB);
+                                        }
+                                        if (semaforo.Semaforo.isDebugMode) {
+                                            System.out.println("");
+                                        }
+                                        if (semaforo.Semaforo.isDebugMode) {
+                                            System.out.println("");
+                                        }
 
                                         rows[fila][2] = valoresTickerCapital.get(ticker.getName()).getCapital();
                                         valoresTickerCapital.get(ticker.getName()).setIsChequeado(true);
@@ -539,7 +537,9 @@ public class Semaforo extends javax.swing.JFrame {
                                         rows[fila][2] = (capital == 0) ? "" : capital;
                                     }
 
-                                    if (semaforo.Semaforo.isDebugMode) System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ROWS FILA " + fila + " COLUMNA  2 VALE: " + rows[fila][2]);
+                                    if (semaforo.Semaforo.isDebugMode) {
+                                        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ROWS FILA " + fila + " COLUMNA  2 VALE: " + rows[fila][2]);
+                                    }
 
                                     elemCapitalDB = valoresTickerCapital.get(ticker.getName());
                                     if (elemCapitalDB == null) {
@@ -578,7 +578,7 @@ public class Semaforo extends javax.swing.JFrame {
 
                                 if (misPosiciones != null) {
                                     Iterator iterator2 = misPosiciones.keySet().iterator();
-                                    
+
                                     while (iterator2.hasNext()) {
                                         String key = iterator2.next().toString();
                                         int value = (Integer) misPosiciones.get(key);
@@ -610,6 +610,7 @@ public class Semaforo extends javax.swing.JFrame {
                                     e.printStackTrace();
                                 }
 
+                                rows[fila][6] = 0;
                                 //System.out.println("INIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIITTTTT");
                                 Map misCierres = Controller.getSettings().getValorCierres();
 
@@ -647,7 +648,9 @@ public class Semaforo extends javax.swing.JFrame {
 
                     Double promedioBajasTickers = ((1.00 * cuentaTickersBaja) / (1.00 * cuentaTickersValidos)) * 100;
 
-                    if (semaforo.Semaforo.isDebugMode) System.out.println("#################### PROMEDIO " + promedioBajasTickers);
+                    if (semaforo.Semaforo.isDebugMode) {
+                        System.out.println("#################### PROMEDIO " + promedioBajasTickers);
+                    }
 
                     if (promedioBajasTickers < 50.0) {
                         jLabelSemaphore.setIcon(new javax.swing.ImageIcon(getClass().getResource("/semaforo/resources/SemVERDE_HOR.png")));
@@ -789,7 +792,7 @@ public class Semaforo extends javax.swing.JFrame {
         //int num = settings.getTickers().size();
         // if (TableWeek.getModel().getRowCount() > 0) {
         int num = Math.min(settings.getTickers().size(), TableWeek.getModel().getRowCount());
-     //   }
+        //   }
 
         // synchronized (Controller.positionLock) {
         for (int row = 0; row < num; row++) {
@@ -820,12 +823,14 @@ public class Semaforo extends javax.swing.JFrame {
         }
         //  }
     }
-    
+
     public void precargaCapitalDB() {
 
         valoresTickerCapital = DDBB.queryCapital();
 
-        if (semaforo.Semaforo.isDebugMode) System.out.println("***************************** CAPITAL HASHMAP  " + valoresTickerCapital.size() + "  " + valoresTickerCapital.toString());
+        if (semaforo.Semaforo.isDebugMode) {
+            System.out.println("***************************** CAPITAL HASHMAP  " + valoresTickerCapital.size() + "  " + valoresTickerCapital.toString());
+        }
 
 //        int numFilasSettings = Controller.getSettings().getTickers().size();
 //        
@@ -897,7 +902,9 @@ public class Semaforo extends javax.swing.JFrame {
         jLabelImagenDJI.setForeground((indiceDJI.tendencia.equals(Indice.ALZA)) ? Color.GREEN : Color.RED);
 
         // PRENDE SEMAFORO
-        if (semaforo.Semaforo.isDebugMode) System.out.println("TENDENCIAS : " + indiceNASDAQ.tendencia + " " + indiceSandP.tendencia + " " + indiceDJI.tendencia);
+        if (semaforo.Semaforo.isDebugMode) {
+            System.out.println("TENDENCIAS : " + indiceNASDAQ.tendencia + " " + indiceSandP.tendencia + " " + indiceDJI.tendencia);
+        }
 
         if ((indiceNASDAQ.tendencia.equals(Indice.BAJA)) & (indiceSandP.tendencia.equals(Indice.BAJA)) & (indiceDJI.tendencia.equals(Indice.BAJA))) {
             jLabelSemaforo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/semaforo/resources/semaforoRojo.png")));
@@ -1002,7 +1009,7 @@ public class Semaforo extends javax.swing.JFrame {
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-    
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -1040,6 +1047,7 @@ public class Semaforo extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
         jLabelPositionNum = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
@@ -1132,11 +1140,11 @@ public class Semaforo extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Ticker", "Price", "to Invest", "CFD", "Bought", "Remain"
+                "Ticker", "Price", "to Invest", "CFD", "Bought", "Remain", "Hedge"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -1151,7 +1159,6 @@ public class Semaforo extends javax.swing.JFrame {
             TableTicker.getColumnModel().getColumn(0).setPreferredWidth(90);
             TableTicker.getColumnModel().getColumn(0).setMaxWidth(90);
             TableTicker.getColumnModel().getColumn(1).setPreferredWidth(90);
-            TableTicker.getColumnModel().getColumn(1).setMaxWidth(90);
             TableTicker.getColumnModel().getColumn(2).setPreferredWidth(120);
             TableTicker.getColumnModel().getColumn(2).setMaxWidth(120);
             TableTicker.getColumnModel().getColumn(3).setPreferredWidth(90);
@@ -1160,6 +1167,7 @@ public class Semaforo extends javax.swing.JFrame {
             TableTicker.getColumnModel().getColumn(4).setMaxWidth(90);
             TableTicker.getColumnModel().getColumn(5).setPreferredWidth(90);
             TableTicker.getColumnModel().getColumn(5).setMaxWidth(90);
+            TableTicker.getColumnModel().getColumn(6).setPreferredWidth(90);
         }
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -1437,10 +1445,13 @@ public class Semaforo extends javax.swing.JFrame {
         jLabel15.setForeground(new java.awt.Color(51, 255, 0));
         jLabel15.setText("    0 - 50%");
 
+        jLabel8.setText("jLabel8");
+
         jLabelPositionNum.setForeground(new java.awt.Color(255, 255, 255));
         jLabelPositionNum.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelPositionNum.setText("jLabel");
-        jLabelPositionNum.setName(""); // NOI18N
+        jLabelPositionNum.setText("jLabel9");
+        jLabelPositionNum.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabelPositionNum.setPreferredSize(new java.awt.Dimension(60, 60));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -1459,8 +1470,10 @@ public class Semaforo extends javax.swing.JFrame {
                         .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(90, 90, 90)
-                        .addComponent(jLabelPositionNum, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(646, 646, 646)
+                        .addComponent(jLabelPositionNum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(282, 282, 282)
+                        .addComponent(jLabel8)
+                        .addGap(412, 412, 412)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1499,11 +1512,12 @@ public class Semaforo extends javax.swing.JFrame {
                         .addComponent(jLabel14)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jLabelPositionNum, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                        .addGap(38, 38, 38)
+                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabelPositionNum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jMenuBar1.setBackground(new java.awt.Color(0, 0, 0));
@@ -1560,7 +1574,7 @@ public class Semaforo extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
+
     private void jMenu2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu2MouseClicked
         // TODO add your handling code here:
 
@@ -1618,7 +1632,7 @@ public class Semaforo extends javax.swing.JFrame {
         this.setTitle("Semaforo");
         URL hj = getClass().getResource("resources/semaforo.png");
         setIconImage(Toolkit.getDefaultToolkit().getImage(hj));
-       
+
         listener = new UpdateTableListener() {
 
             @Override
@@ -1958,9 +1972,7 @@ public class Semaforo extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        
-  
-        
+
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -2022,6 +2034,7 @@ public class Semaforo extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabelImagenDJI;
     private javax.swing.JLabel jLabelImagenNASDAQ;
     private javax.swing.JLabel jLabelImagenSandP;
@@ -2037,14 +2050,11 @@ public class Semaforo extends javax.swing.JFrame {
     private javax.swing.JScrollPane thirdWeeksContainer;
     private javax.swing.JScrollPane tickerContainer;
     // End of variables declaration//GEN-END:variables
-  
+
     /*oculto las consulta de indices*/
-   
-
-
 }
 
-    //$$$ DEPRECATED 
+//$$$ DEPRECATED 
 /*    
  public void initComponents2(){
             
