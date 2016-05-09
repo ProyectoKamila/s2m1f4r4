@@ -860,13 +860,15 @@ public class ApiController implements EWrapper {
 					int year = Integer.parseInt( date.substring( 0, 4) );
 					int month = Integer.parseInt( date.substring( 4, 6) );
 					int day = Integer.parseInt( date.substring( 6) );
-					longDate = new Date( year - 1900, month - 1, day).getTime() / 1000;
+					//longDate = new Date( year - 1900, month - 1, day).getTime() / 1000;
+                                        //Eliminado por funcion decapred
 				}
 				else {
 					longDate = Long.parseLong( date);
 				}
-				Bar bar = new Bar( longDate, high, low, open, close, wap, volume, count);
-				handler.historicalData(bar, hasGaps);
+				//Bar bar = new Bar( longDate, high, low, open, close, wap, volume, count);
+				//handler.historicalData(bar, hasGaps);
+                                //Eliminado por funcion decapred
 			}
 		}
 		recEOM();
