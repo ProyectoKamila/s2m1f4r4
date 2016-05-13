@@ -52,6 +52,10 @@ import semaforo.dialog.LoadingDialog;
 import view.Synchronizer;
 import java.lang.String;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import static java.sql.Types.NULL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import semaforo.LogFile;
@@ -83,13 +87,15 @@ public class Semaforo extends javax.swing.JFrame {
     static Color colorParCeldaWeeks = java.awt.Color.DARK_GRAY;
 
     static Color colorBotonesPaneles = Color.RED.darker();
+    
+    int porcentajeCasillaF = 14;
+    int porcentajeCasillaE = 15 + porcentajeCasillaF;
+    int porcentajeCasillaD = 16 + porcentajeCasillaE;
+    int porcentajeCasillaC = 17 + porcentajeCasillaD;
+    int porcentajeCasillaB = 18 + porcentajeCasillaC; //% de CFD
+    int porcentajeCasillaA = 20 + porcentajeCasillaB; //% de CFD (acciones que se pueden comprar)
 
-    int porcentajeCasillaD = 19;
-    int porcentajeCasillaC = 23 + porcentajeCasillaD;
-    int porcentajeCasillaB = 27 + porcentajeCasillaC; //% de CFD
-    int porcentajeCasillaA = 31 + porcentajeCasillaB; //% de CFD (acciones que se pueden comprar)
-
-    int[] porcentajes = {porcentajeCasillaA, porcentajeCasillaB, porcentajeCasillaC, porcentajeCasillaD}; //int[4];
+    int[] porcentajes = {porcentajeCasillaA, porcentajeCasillaB, porcentajeCasillaC, porcentajeCasillaD, porcentajeCasillaE, porcentajeCasillaF}; //int[6];
 
     private static final int WEEK1 = 0;
     private static final int WEEK2 = 1;
@@ -102,12 +108,19 @@ public class Semaforo extends javax.swing.JFrame {
     Timer timer = null;
 
     private static final Color[] colors = new Color[]{
-        new Color(0, 130, 0), // Green
-        new Color(80, 190, 0), // Light Green
-        new Color(110, 180, 0), // Yellow
-        new Color(150, 170, 0), // Light Yellow
-        // VERDES HASTA ACA
-        new Color(255, 150, 0), // Light Pink
+        new Color(0, 180, 0), // Green
+        new Color(30, 190, 30), // Light Green
+        new Color(60, 200, 60), // 
+        new Color(80, 210, 80), // Light Yellow
+        new Color(100, 220, 100), // Light Yellow
+        new Color(120, 250,120), // Light Yellow
+        // VERDES HASTA ACA - vienen los amarillos
+        new Color(255, 255, 0), 
+        new Color(255, 255, 25), 
+        new Color(255, 255, 50), 
+        new Color(255, 255, 75), 
+        new Color(255, 255, 100), 
+        //rojos
         new Color(244, 130, 0), // Pink 
         new Color(198, 89, 17), // Brown
         new Color(255, 70, 70), // Red
@@ -116,7 +129,7 @@ public class Semaforo extends javax.swing.JFrame {
         new Color(255, 255, 50)
     };
 
-    public int num_positions = 0;
+    public int num_positions;
 
     Settings settings = null;
     //Controller controller = null;
@@ -217,8 +230,10 @@ public class Semaforo extends javax.swing.JFrame {
             JComponent result = (JComponent) render.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
             rowsCopy tablaCopia = new rowsCopy(0, 0, 2);
-            int[] numerosEstado = new int[100];
+            int[] numerosEstado = new int[500];
+            int[] numerosComprar = new int[500];
             numerosEstado = tablaCopia.retornaNumerosEstado();
+            numerosComprar = tablaCopia.retornaNumerosComprar();
             /*Aqui se pinta solo la linea 6*/
             
             if (column == 6) {
@@ -248,7 +263,46 @@ public class Semaforo extends javax.swing.JFrame {
                     result.setForeground(Color.WHITE);
                 }
             }
-
+            //PARA COMPRAR HOY?????
+           //JOptionPane.showMessageDialog(null,row+"", "", JOptionPane.ERROR_MESSAGE);
+//            
+            Object tickers[][]=new Object[500][9];
+            tickers=tablaCopia.retornaCopiaTabla();
+            
+                                if(column==7)
+                                try {
+                                    ResultSet resTickers=DDBB.BuscarTickers();
+                                    ResultSet resCompras;
+                                    Calendar cal3 = Calendar.getInstance();
+                                    SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd");
+                                    String fechaHoyConsulta = format3.format(cal3.getTime());
+                                    while(resTickers.next()){
+                                           try {
+                                               resCompras=DDBB.BuscarComprasFecha(resTickers.getString("name"), fechaHoyConsulta);
+                                               if(resCompras.next()){
+                                               //if(tickers[row][8]==null) JOptionPane.showMessageDialog(null,tickers[row][8]+"+"+row, "", JOptionPane.ERROR_MESSAGE);
+                                                            if(tickers[row][8]!=null){
+                                                                if((int)tickers[row][8]==1){
+                                                                    result.setForeground(Color.GREEN);
+                                                                }
+                                                                if((int)tickers[row][8]==0){
+                                                                    result.setForeground(Color.RED);
+                                                                }
+                                                            }else{
+                                                                result.setForeground(Color.RED);
+                                                            }
+                                                        
+                                               }
+                                           } catch (SQLException ex) {
+                                               Logger.getLogger(Semaforo.class.getName()).log(Level.SEVERE, null, ex);
+                                           }      
+                                    }
+                                } catch (SQLException ex) {
+                                    Logger.getLogger(Semaforo.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+            
+            
+            
             //result.setBackground(Color.black);
             ((JLabel) result).setHorizontalAlignment(SwingConstants.CENTER);
 //$$$ Elimina bordes resultados weeks
@@ -284,7 +338,7 @@ public class Semaforo extends javax.swing.JFrame {
 ////            b = BorderFactory.createCompoundBorder(b, BorderFactory.createMatteBorder(0, 1, 0, 0, left));
 //            b = BorderFactory.createCompoundBorder(b, BorderFactory.createMatteBorder(0, 0, 1, 0, bottom));
             // index 0 es porque la linea roja solo se prende en week 1 
-            if (numColumn == 4 && index == 0) {
+            if (numColumn == 6 && index == 0) {
                 b = BorderFactory.createCompoundBorder(b, BorderFactory.createMatteBorder(0, 0, 0, 1, Color.RED));
             }
 
@@ -349,7 +403,6 @@ public class Semaforo extends javax.swing.JFrame {
                                     if (!tempStrValPosicion.isEmpty()) {
                                         division -= Double.parseDouble(tempStrValPosicion);
                                     }
-
                                 }
 
                                 if (division < 0) {
@@ -367,7 +420,6 @@ public class Semaforo extends javax.swing.JFrame {
                     }
 
                     cellComponent.setBackground(colors[this.positions_render[row] - 1]);
-
                 } else {
                     cellComponent.setBackground(colors[0]);
                 }
@@ -387,7 +439,7 @@ public class Semaforo extends javax.swing.JFrame {
 
         TableCellRenderer render;
         Border b;
-
+        
         public ResetCellRenderer(TableCellRenderer r, Color top, Color left, Color bottom, Color right, int numColumn) {
             render = r;
 
@@ -444,7 +496,23 @@ public class Semaforo extends javax.swing.JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        
+        
+        String nombre = Controller.getSettings().getPorcentCapital().toString();
+       double base = Double.parseDouble(nombre);
+//        int base = 71;
 
+       if (base >= 0 && base < 51) { //LUZ VERDE
+           jLabelInvested.setIcon(new javax.swing.ImageIcon(getClass().getResource("/semaforo/resources/verde.png")));
+       } else if (base >= 51 && base < 71) { //LUZ AMARILLA
+           jLabelInvested.setIcon(new javax.swing.ImageIcon(getClass().getResource("/semaforo/resources/amarillo.png")));
+
+       } else if (base > 70&& base < 101) { //LUZ ROJA
+           jLabelInvested.setIcon(new javax.swing.ImageIcon(getClass().getResource("/semaforo/resources/rojo.png")));
+
+       }
+        
         jLabelInvested.setText("" + String.format("%.2f", Controller.getSettings().getPorcentCapital()) + " %");
 
 //############################################################
@@ -510,13 +578,25 @@ public class Semaforo extends javax.swing.JFrame {
 //$$$ SE SETEA LAS COLUMNAS DE TICKER
                     int capital = 0;
                     Object obje = null;
-
-                    String columnsTitle[] = {"Ticker", "Price", "To Invest", "CFD", "Bought", "Remain", "Hedge"};
-                    Object rows[][] = new Object[settings.getTickers().size()][7];
+                    
+                    
+                    Calendar cal = Calendar.getInstance();
+                    cal.add(Calendar.DATE, -1);
+                    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                    String fechaAyer = format1.format(cal.getTime());
+                    
+                    Calendar cal2 = Calendar.getInstance();
+                    SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+                    String fechaHoy = format2.format(cal2.getTime());
+                    
+                    int compradasOld, compradasHoy;
+                    
+                    String columnsTitle[] = {"Ticker", "Price", "To Invest", "CFD", "Bought", "Remain", "Hedge", "Comprar?"};
+                    Object rows[][] = new Object[settings.getTickers().size()][9];
 
                     rowsCopy tablaCopia = new rowsCopy(settings.getTickers().size(), 7, 2);
-                    Object TablaConHedge[][] = new Object[100][7];
-                    int[] numerosEstado = new int[100];
+                    Object TablaConHedge[][] = new Object[500][8];
+                    int[] numerosEstado = new int[500];
 
                     TablaConHedge = tablaCopia.retornaCopiaTabla();
                     numerosEstado = tablaCopia.retornaNumerosEstado();
@@ -533,6 +613,7 @@ public class Semaforo extends javax.swing.JFrame {
                             if (ticker.getName().equalsIgnoreCase(entry.getKey().toString())) {
 //$$$ 0 Nombre del Ticker
                                 rows[fila][0] = ticker.getName();
+                                
 //$$$ 1 Valor del Ticker
                                 rows[fila][1] = String.format("%.2f", ticker.getCurrentPrice());
 //$$$ 2 CAPITAL
@@ -592,7 +673,6 @@ public class Semaforo extends javax.swing.JFrame {
                                     }
 
                                 } catch (Exception e) {
-
                                     e.printStackTrace();
                                     rows[fila][2] = "";
                                 }
@@ -608,7 +688,7 @@ public class Semaforo extends javax.swing.JFrame {
 //$$$ Bought
 
                                 Map misPosiciones = Controller.getSettings().getValorPosiciones();
-
+                                rows[fila][4]=0;
                                 if (misPosiciones != null) {
                                     Iterator iterator2 = misPosiciones.keySet().iterator();
 
@@ -620,7 +700,7 @@ public class Semaforo extends javax.swing.JFrame {
                                             rows[fila][4] = value;
                                         }
 
-                                        //System.out.println(key + " " + value);
+                                        System.out.println(key + " " + value);
                                     }
 
                                 }
@@ -645,9 +725,54 @@ public class Semaforo extends javax.swing.JFrame {
                                 //JOptionPane.showMessageDialog(null, "alert", "alert", JOptionPane.ERROR_MESSAGE);
 
                                 rows[fila][6] = TablaConHedge[fila][6];
-
-                             
-                                //System.out.println("INIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIITTTTT");
+                                
+                                
+                                rows[fila][7] = "O";
+                                String compradasDDBB="0";
+                                String id_ticker= rows[fila][0].toString();
+                                String compradasString;
+                                
+                                compradasString=rows[fila][4]+"";
+                               
+                               rows[fila][8]=1;
+                               // COMPRADAS HOY SI O NO
+                                ResultSet resCompras=DDBB.BuscarComprasFecha(id_ticker, fechaHoy);
+                                try {
+                                    if(resCompras.next()){
+                                     rows[fila][8]=resCompras.getInt("compro");
+                                     tablaCopia.cambiarCopiaTabla(fila, 8, resCompras.getInt("compro"));
+                                     //JOptionPane.showMessageDialog(null,resCompras.getInt("compradas")+"", "", JOptionPane.ERROR_MESSAGE);
+                                     compradasDDBB=resCompras.getString("compradas");
+                                     if(!compradasDDBB.isEmpty() && !compradasString.isEmpty()){
+                                                compradasOld=Integer.parseInt(compradasDDBB);
+                                                compradasHoy=Integer.parseInt(compradasString);
+                                                //
+                                                if(compradasHoy>compradasOld){
+//                                                JOptionPane.showMessageDialog(null,compradasOld+"-"+compradasHoy+"-"+resCompras.getInt("compro"), "", JOptionPane.ERROR_MESSAGE);
+                                                    //ROJO
+                                                    
+                                                    DDBB.deleteCompras(id_ticker);
+                                                    DDBB.insertCompras(id_ticker, compradasString, fechaHoy, 0);
+                                                    rows[fila][8]=0;
+                                                    tablaCopia.cambiarCopiaTabla(fila, 8, "0");
+                                                  //  tablaCopia.cambiarNumerosComprar(fila, 0);
+                                                   
+                                                }
+                                                //DDBB.insertCompras(id_ticker, compradasString, fechaHoy);
+                                               }else{
+                                                  
+                                               }
+                                    }else{
+                                    DDBB.insertCompras(id_ticker, compradasString, fechaHoy, 1);
+                                    rows[fila][8]=1;
+                                    tablaCopia.cambiarCopiaTabla(fila, 8, "1");
+                                        //JOptionPane.showMessageDialog(null,"", "", JOptionPane.ERROR_MESSAGE);
+                                    }
+                                } catch (SQLException ex) {
+                                    Logger.getLogger(Semaforo.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                               
+                             //System.out.println("INIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIITTTTT");
                                 Map misCierres = Controller.getSettings().getValorCierres();
 
                                 if (misCierres != null) {
@@ -701,7 +826,7 @@ public class Semaforo extends javax.swing.JFrame {
 // $$$ GENERACION DEL MODELO CON LA MEJORA DE NO EDICION DE LAS OTRAS COLUMNAS                    
                     TableModel newModel = new DefaultTableModel(rows, columnsTitle) {
                         boolean[] canEdit = new boolean[]{
-                            false, false, true, false, false, false, false
+                            false, false, true, false, false, false, false, false
                         };
 
                        public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -713,21 +838,20 @@ public class Semaforo extends javax.swing.JFrame {
                     if (!TableTicker.isEditing()) {
 
                         TableTicker.setModel(newModel);
-
                         formateaCabeceroTicker();
                     }
-
+                    
                     //tickerContainer.getViewport().setBackground(Color.black);
                     updateTableTickers();
 
-                    updateTableWeek(TableWeek1, settings.getVaribable("rango_1"));
-                    loadTableCells(TableWeek1, WEEK1, map);
+                    updateTableWeek(TableWeek1, settings.getVaribable("rango_1"), 17);
+                    loadTableCells(TableWeek1, WEEK1, map, 17);
 
-                    updateTableWeek(TableWeek2, settings.getVaribable("rango_2"));
-                    loadTableCells(TableWeek2, WEEK2, map);
+                    updateTableWeek(TableWeek2, settings.getVaribable("rango_2"), 17);
+                    loadTableCells(TableWeek2, WEEK2, map, 17);
 
-                    updateTableWeek(TableWeek3, settings.getVaribable("rango_3"));
-                    loadTableCells(TableWeek3, WEEK3, map);
+                    updateTableWeek(TableWeek3, settings.getVaribable("rango_3"), 17);
+                    loadTableCells(TableWeek3, WEEK3, map, 17);
 
                     //Redraw the window
                     synchronized (updateLock) {
@@ -807,15 +931,15 @@ public class Semaforo extends javax.swing.JFrame {
         return sortedMap;
     }
 
-    public void loadTableCells(JTable TableWeek, int index, Map<String, List<Integer>> ht) {
+    public void loadTableCells(JTable TableWeek, int index, Map<String, List<Integer>> ht, int tamano) {
 
         Settings settings = Controller.getSettings();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < tamano-1; i++) {
             TableWeek.getColumnModel().getColumn(i).setCellRenderer(new ResetCellRenderer(TableWeek.getDefaultRenderer(Object.class
             ), Color.LIGHT_GRAY, Color.LIGHT_GRAY, Color.LIGHT_GRAY, Color.LIGHT_GRAY, i));
         }
-
+        
         int[] my_positions = new int[num_positions];
         boolean[] paint = new boolean[num_positions];
 
@@ -831,13 +955,14 @@ public class Semaforo extends javax.swing.JFrame {
 
         // synchronized (Controller.positionLock) {
         for (int row = 0; row < num; row++) {
-
+           
             if (ht.get(TableTicker.getValueAt(row, 0)) != null) {
-
+//                if(row>24)JOptionPane.showMessageDialog(null, row+"");
                 List<Integer> listInt = ht.get(TableTicker.getValueAt(row, 0) /*settings.getTickers().get(row).getName()*/);
                 my_positions[row] = -1;
                 if (!listInt.isEmpty() && settings.getTickers().get(row).isHistory()) {
-                    int col = ht.get(TableTicker.getValueAt(row, 0)).get(index) + 1;
+//                    int col = ht.get(TableTicker.getValueAt(row, 0)).get(index) + 1;
+                    int col = ht.get(TableTicker.getValueAt(row, 0)).get(index);
                     my_positions[row] = col;
 
                 }
@@ -848,7 +973,7 @@ public class Semaforo extends javax.swing.JFrame {
         // }
         //Modify the cell
         // if (num > 0) {
-        for (int col = 0; col < 11/*settings.getTickers().size()*/; col++) {
+        for (int col = 0; col < tamano/*settings.getTickers().size()*/; col++) {
 
             //     if (paint[col]) {
             TableWeek.getColumnModel().getColumn(col).setCellRenderer(new MyCellRenderer(TableWeek.getDefaultRenderer(Object.class
@@ -1077,13 +1202,13 @@ public class Semaforo extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabelSemaphore = new javax.swing.JLabel();
-        jLabelInvested = new javax.swing.JLabel();
         jLabelNumPos = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabelPositionNum = new javax.swing.JLabel();
+        jLabelInvested = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
 
@@ -1103,11 +1228,11 @@ public class Semaforo extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Low", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "High"
+                "Low", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "High"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -1119,18 +1244,8 @@ public class Semaforo extends javax.swing.JFrame {
         */
         firstWeeksContainer.setViewportView(TableWeek1);
         if (TableWeek1.getColumnModel().getColumnCount() > 0) {
-            TableWeek1.getColumnModel().getColumn(0).setPreferredWidth(70);
-            TableWeek1.getColumnModel().getColumn(1).setPreferredWidth(60);
-            TableWeek1.getColumnModel().getColumn(2).setPreferredWidth(60);
-            TableWeek1.getColumnModel().getColumn(3).setPreferredWidth(60);
-            TableWeek1.getColumnModel().getColumn(4).setPreferredWidth(60);
-            TableWeek1.getColumnModel().getColumn(5).setPreferredWidth(30);
-            TableWeek1.getColumnModel().getColumn(6).setPreferredWidth(30);
-            TableWeek1.getColumnModel().getColumn(7).setPreferredWidth(30);
-            TableWeek1.getColumnModel().getColumn(8).setPreferredWidth(30);
-            TableWeek1.getColumnModel().getColumn(9).setPreferredWidth(30);
-            TableWeek1.getColumnModel().getColumn(10).setPreferredWidth(30);
-            TableWeek1.getColumnModel().getColumn(11).setPreferredWidth(75);
+            TableWeek1.getColumnModel().getColumn(0).setPreferredWidth(250);
+            TableWeek1.getColumnModel().getColumn(17).setPreferredWidth(250);
         }
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -1173,11 +1288,11 @@ public class Semaforo extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Ticker", "Price", "to Invest", "cambio", "CFD", "Bought", "Remain", "Hedge"
+                "Ticker", "Price", "to Invest", "cambio", "CFD", "Bought", "Remain", "Hedge", "Compra?"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true, true, false, false, false, false
+                false, false, true, true, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -1187,6 +1302,7 @@ public class Semaforo extends javax.swing.JFrame {
         TableTicker.setGridColor(new java.awt.Color(255, 255, 255));
         TableTicker.setIntercellSpacing(new java.awt.Dimension(0, 0));
         TableTicker.setMaximumSize(new java.awt.Dimension(500, 0));
+        TableTicker.setRequestFocusEnabled(false);
         TableTicker.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         TableTicker.getTableHeader().setReorderingAllowed(false);
         TableTicker.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1246,11 +1362,11 @@ public class Semaforo extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Low", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "High"
+                "Low", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "High"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -1261,18 +1377,8 @@ public class Semaforo extends javax.swing.JFrame {
         */
         secondWeeksContainer.setViewportView(TableWeek2);
         if (TableWeek2.getColumnModel().getColumnCount() > 0) {
-            TableWeek2.getColumnModel().getColumn(0).setPreferredWidth(70);
-            TableWeek2.getColumnModel().getColumn(1).setPreferredWidth(60);
-            TableWeek2.getColumnModel().getColumn(2).setPreferredWidth(60);
-            TableWeek2.getColumnModel().getColumn(3).setPreferredWidth(60);
-            TableWeek2.getColumnModel().getColumn(4).setPreferredWidth(60);
-            TableWeek2.getColumnModel().getColumn(5).setPreferredWidth(30);
-            TableWeek2.getColumnModel().getColumn(6).setPreferredWidth(30);
-            TableWeek2.getColumnModel().getColumn(7).setPreferredWidth(30);
-            TableWeek2.getColumnModel().getColumn(8).setPreferredWidth(30);
-            TableWeek2.getColumnModel().getColumn(9).setPreferredWidth(30);
-            TableWeek2.getColumnModel().getColumn(10).setPreferredWidth(30);
-            TableWeek2.getColumnModel().getColumn(11).setPreferredWidth(75);
+            TableWeek2.getColumnModel().getColumn(0).setPreferredWidth(250);
+            TableWeek2.getColumnModel().getColumn(17).setPreferredWidth(250);
         }
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -1307,11 +1413,11 @@ public class Semaforo extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Low", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "High"
+                "Low", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "High"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -1323,18 +1429,8 @@ public class Semaforo extends javax.swing.JFrame {
         */
         thirdWeeksContainer.setViewportView(TableWeek3);
         if (TableWeek3.getColumnModel().getColumnCount() > 0) {
-            TableWeek3.getColumnModel().getColumn(0).setPreferredWidth(70);
-            TableWeek3.getColumnModel().getColumn(1).setPreferredWidth(60);
-            TableWeek3.getColumnModel().getColumn(2).setPreferredWidth(60);
-            TableWeek3.getColumnModel().getColumn(3).setPreferredWidth(60);
-            TableWeek3.getColumnModel().getColumn(4).setPreferredWidth(60);
-            TableWeek3.getColumnModel().getColumn(5).setPreferredWidth(30);
-            TableWeek3.getColumnModel().getColumn(6).setPreferredWidth(30);
-            TableWeek3.getColumnModel().getColumn(7).setPreferredWidth(30);
-            TableWeek3.getColumnModel().getColumn(8).setPreferredWidth(30);
-            TableWeek3.getColumnModel().getColumn(9).setPreferredWidth(30);
-            TableWeek3.getColumnModel().getColumn(10).setPreferredWidth(30);
-            TableWeek3.getColumnModel().getColumn(11).setPreferredWidth(75);
+            TableWeek3.getColumnModel().getColumn(0).setPreferredWidth(250);
+            TableWeek3.getColumnModel().getColumn(17).setPreferredWidth(250);
         }
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -1465,10 +1561,6 @@ public class Semaforo extends javax.swing.JFrame {
         jLabelSemaphore.setIcon(new javax.swing.ImageIcon(getClass().getResource("/semaforo/resources/SemVERDE_HOR.png"))); // NOI18N
         jLabelSemaphore.setText("jLabel8");
 
-        jLabelInvested.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabelInvested.setForeground(new java.awt.Color(240, 240, 120));
-        jLabelInvested.setText("46%");
-
         jLabelNumPos.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabelNumPos.setForeground(new java.awt.Color(240, 240, 120));
         jLabelNumPos.setText("9");
@@ -1494,6 +1586,13 @@ public class Semaforo extends javax.swing.JFrame {
         jLabelPositionNum.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabelPositionNum.setPreferredSize(new java.awt.Dimension(60, 60));
 
+        jLabelInvested.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        jLabelInvested.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelInvested.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelInvested.setText("46");
+        jLabelInvested.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabelInvested.setPreferredSize(new java.awt.Dimension(60, 60));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -1504,23 +1603,23 @@ public class Semaforo extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(90, 90, 90)
                         .addComponent(jLabelPositionNum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(282, 282, 282)
+                        .addGap(204, 204, 204)
+                        .addComponent(jLabelInvested, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(jLabel8))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addGap(18, 18, 18)
                         .addComponent(jLabelNumPos)
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabelInvested))
+                        .addComponent(jLabel7))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton13Weeks)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton26Weeks)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton52Weeks)))
-                .addGap(264, 264, 264)
+                .addGap(314, 314, 314)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1542,12 +1641,13 @@ public class Semaforo extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
                             .addComponent(jLabelNumPos)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabelInvested))
+                            .addComponent(jLabel7))
                         .addGap(11, 11, 11)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8)
-                            .addComponent(jLabelPositionNum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabelPositionNum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabelInvested, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabelSemaphore, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -2025,7 +2125,8 @@ public class Semaforo extends javax.swing.JFrame {
         }
     }
 
-    public synchronized void updateTableWeek(JTable TableWeek, int index) {
+    public synchronized void updateTableWeek(JTable TableWeek, int index, int tamano) {
+ 
         Settings settings = Controller.getSettings();
 
         //  TableWeek.getColumnModel().getColumn(0).setPreferredWidth(120);
@@ -2048,7 +2149,7 @@ public class Semaforo extends javax.swing.JFrame {
                     if (TableTicker.getModel().getValueAt(m, 0) != null) {
                         if (TableTicker.getModel().getValueAt(m, 0).equals(settings.getTickers().get(i).getName())) {
                             model.setValueAt(String.format("%.2f", settings.getTickers().get(i).getMinValue(index)), m, 0);
-                            model.setValueAt(String.format("%.2f", settings.getTickers().get(i).getMaxValue(index)), m, 11); //TODO: Parametrizar
+                            model.setValueAt(String.format("%.2f", settings.getTickers().get(i).getMaxValue(index)), m, tamano); //TODO: Parametrizar
                         }
                     }
                 }

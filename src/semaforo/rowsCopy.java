@@ -11,8 +11,9 @@ package semaforo;
  */
 public class rowsCopy {
     
-    public static Object copiaTabla[][]=new Object[100][8];
-    public static int[] numerosEstado =new int[100];
+    public static Object copiaTabla[][]=new Object[500][9];
+    public static int[] numerosEstado =new int[500];
+    public static int[] numerosComprar = new int[500];
     
     public rowsCopy(int fila, int columna, int caso){
         switch (caso){
@@ -30,6 +31,9 @@ public class rowsCopy {
     public int[] retornaNumerosEstado(){
         return numerosEstado;
     }
+     public int[] retornaNumerosComprar(){
+        return numerosComprar;
+    }
     public Object retornaValorCopiaTabla(int fila, int col){
         return copiaTabla[fila][col];
     }
@@ -38,5 +42,8 @@ public class rowsCopy {
     }
     public void cambiarNumerosEstados(int posicion, int valor){
         numerosEstado[posicion]=valor;
+    }
+    public void cambiarNumerosComprar(int posicion, int valor){
+        numerosComprar[posicion]=valor;
     }
 }

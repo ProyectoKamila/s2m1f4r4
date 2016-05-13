@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import kobytest.KobyTest;
 import static kobytest.KobyTest.isDebugConsoleMode;
 
@@ -75,7 +76,7 @@ public class Controller {
         //float currentValue = DDBB.getTickerValue(nameTicker, min - 0.5f, max + 0.5f);
 
         ArrayList<Integer> positions = new ArrayList<Integer>();
-
+       
         int j = 1;
         int week = 0;
         while ((week = (settings.getVaribable("rango_" + j))) >= 0) {
@@ -86,12 +87,14 @@ public class Controller {
             // settings.getTickers().get(tikcerID).setMinValue(-10, week);
             if (precio <= min) {
                 settings.getTickers().get(tikcerID).setMinValue(precio, week);
-                pos = 0;
+                pos = 1;
             } else if (precio >= max) {
                 settings.getTickers().get(tikcerID).setMaxValue(precio, week);
-                pos = 9;
+                pos = 16;
             } else {
                 pos = normalize(min, max, precio);
+                if(pos<=0)pos=1;
+                if(pos>16)pos=16;
             }
 
             //  synchronized (positionLock) {
@@ -233,13 +236,11 @@ public class Controller {
     }
 
     public static Hashtable<String, List<Integer>> getTickersValue() {
-
         return tickersValues;
     }
 
     private static int normalize(double min, double max, double value) {
-        long d = Math.round(((value - min) / (max - min)) * 9);  //$$$ todo: cUSTOMIZAR COLUMNAS(9 = 10 - 1)
-
+        long d = Math.round(((value - min) / (max - min)) * 16);  //$$$ todo: cUSTOMIZAR COLUMNAS(9 = 10 - 1)
         return (int) d;
     }
 
