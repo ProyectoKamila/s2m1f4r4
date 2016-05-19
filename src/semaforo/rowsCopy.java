@@ -14,6 +14,8 @@ public class rowsCopy {
     public static Object copiaTabla[][]=new Object[500][9];
     public static int[] numerosEstado =new int[500];
     public static int[] numerosComprar = new int[500];
+    public static int[] posiciones = new int[500];
+    
     
     public rowsCopy(int fila, int columna, int caso){
         switch (caso){
@@ -24,6 +26,12 @@ public class rowsCopy {
                 
             break;
         }
+    }
+    public void setPosiciones(int [] posicionesNuevas){
+        posiciones=posicionesNuevas;
+    }
+    public int[] getPosiciones (){
+        return posiciones;
     }
     public Object[][] retornaCopiaTabla(){
         return copiaTabla;

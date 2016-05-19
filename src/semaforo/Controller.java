@@ -94,7 +94,7 @@ public class Controller {
             } else {
                 pos = normalize(min, max, precio);
                 if(pos<=0)pos=1;
-                if(pos>16)pos=16;
+                if(pos>16)pos=16;               
             }
 
             //  synchronized (positionLock) {

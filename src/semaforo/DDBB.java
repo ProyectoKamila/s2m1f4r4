@@ -7,6 +7,8 @@ package semaforo;
 
 import java.util.Random;
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -91,6 +93,7 @@ public class DDBB {
                 + "  `id` INT NOT NULL AUTO_INCREMENT,\n"
                 + "  `name` VARCHAR(15) NOT NULL,"
                 + "  `capital` INT,"
+                + "  `hedge` INT,"
                 + "PRIMARY KEY (`id`)); "
                 + "CREATE UNIQUE INDEX `simbolo` ON `tickers` (`name`)";
 
@@ -102,15 +105,17 @@ public class DDBB {
                 + "  `fecha` VARCHAR(20) NOT NULL);";
 
         final String CREATE_COLUMN_CAPITAL = "ALTER TABLE `tickers` ADD `capital` INT";
-
+        Calendar cal2 = Calendar.getInstance();
+                    SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+                    String fechaHoy = format2.format(cal2.getTime());
         final String INSERT_DEFAULT_PREFERENCES_RANGO_1 = "insert INTO preferencias VALUES(null,'" + RANGO_1 + "', '13')";
         final String INSERT_DEFAULT_PREFERENCES_RANGO_2 = "insert INTO preferencias VALUES(null,'" + RANGO_2 + "', '26')";
         final String INSERT_DEFAULT_PREFERENCES_RANGO_3 = "insert INTO preferencias VALUES(null,'" + RANGO_3 + "', '52')";
         final String INSERT_DEFAULT_PREFERENCES_RATIO = "insert INTO preferencias VALUES(null,'" + RATIO_REFRESCO + "',1000)";
-        final String w = "insert INTO compras VALUES(NULL,'GILD','2',1,'2016-05-13')";
-        final String w2 = "insert INTO compras VALUES(NULL,'GOOG','2',1,'2016-05-13')";
-        final String w3 = "insert INTO compras VALUES(NULL,'IBM','-1',1,'2016-05-13')";
-        final String w4 = "insert INTO compras VALUES(NULL,'ADM','2',1,'2016-05-13')";
+//        final String w = "insert INTO compras VALUES(NULL,'GILD','4',1,'"+fechaHoy+"')";
+//        final String w2 = "insert INTO compras VALUES(NULL,'GOOG','2',1,'"+fechaHoy+"')";
+//        final String w3 = "insert INTO compras VALUES(NULL,'IBM','-1',1,'"+fechaHoy+"')";
+//        final String w4 = "insert INTO compras VALUES(NULL,'ADM','2',1,'"+fechaHoy+"')";
 
         Statement stmt;
         try {
@@ -126,10 +131,10 @@ public class DDBB {
             stmt.executeUpdate(INSERT_DEFAULT_PREFERENCES_RANGO_2);
             stmt.executeUpdate(INSERT_DEFAULT_PREFERENCES_RANGO_3);
             stmt.executeUpdate(INSERT_DEFAULT_PREFERENCES_RATIO);
-            stmt.executeUpdate(w);
-            stmt.executeUpdate(w2);
-            stmt.executeUpdate(w3);
-            stmt.executeUpdate(w4);
+//            stmt.executeUpdate(w);
+//            stmt.executeUpdate(w2);
+//            stmt.executeUpdate(w3);
+//            stmt.executeUpdate(w4);
 
         } catch (SQLException ex) {
 
@@ -261,7 +266,7 @@ public class DDBB {
     public static void deleteComprasFecha(String fecha) {
         getConection();
 
-        String deleteCompras = "DELETE FROM COMPRAS WHERE id_ticker = '" + fecha + "'";
+        String deleteCompras = "DELETE FROM COMPRAS WHERE fecha != '" + fecha + "'";
 
         try {
             conn.createStatement().executeUpdate(deleteCompras);
@@ -349,6 +354,12 @@ public class DDBB {
         update(UPDATE_TICKER);
         closeConection();
     }
+    public static void updateTicker(String ticker, int value) {
+        final String UPDATE_TICKER = "UPDATE tickers SET hedge='" + value + "' WHERE name='" + ticker + "'";
+        getConection();
+        update(UPDATE_TICKER);
+        closeConection();
+    }
 
     public static Map<String, ElementoCapitalDB> queryCapital() {
         String SELECT_CAPITAL = "select * from tickers;";
@@ -381,7 +392,7 @@ public class DDBB {
     }
 
     public static void insertTicker(String name) {
-        String INSERT_TICKER = "insert INTO tickers VALUES(null, '" + name + "',0);";
+        String INSERT_TICKER = "insert INTO tickers VALUES(null, '" + name + "',0,3);";
         getConection();
         insert(INSERT_TICKER);
         closeConection();
@@ -423,6 +434,19 @@ public class DDBB {
 
     public static ResultSet BuscarTickers() {
         String sql = "select name, id from tickers ORDER BY id asc";
+
+        try {
+            getConection();
+            return conn.createStatement().executeQuery(sql);
+        } catch (SQLException ex) {
+            closeConection();
+            Logger.getLogger(DDBB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public static ResultSet BuscarTickers(String name) {
+        String sql = "select * from tickers where name='"+name+"'";
 
         try {
             getConection();

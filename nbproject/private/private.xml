@@ -4,11 +4,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="SEMAFORO"/>
         <group>
-            <file>file:/C:/Users/maikolleon/Documents/NetBeansProjects/Semaforo/s2m1f4r4/src/semaforo/Semaforo.java</file>
-            <file>file:/C:/Users/maikolleon/Documents/NetBeansProjects/Semaforo/s2m1f4r4/src/kobytest/KobyTest.java</file>
             <file>file:/C:/Users/maikolleon/Documents/NetBeansProjects/Semaforo/s2m1f4r4/src/semaforo/Controller.java</file>
+            <file>file:/C:/Users/maikolleon/Documents/NetBeansProjects/Semaforo/s2m1f4r4/src/kobytest/KobyTest.java</file>
+            <file>file:/C:/Users/maikolleon/Documents/NetBeansProjects/Semaforo/s2m1f4r4/src/semaforo/Positions.java</file>
             <file>file:/C:/Users/maikolleon/Documents/NetBeansProjects/Semaforo/s2m1f4r4/src/semaforo/DDBB.java</file>
             <file>file:/C:/Users/maikolleon/Documents/NetBeansProjects/Semaforo/s2m1f4r4/src/semaforo/Settings.java</file>
+            <file>file:/C:/Users/maikolleon/Documents/NetBeansProjects/Semaforo/s2m1f4r4/src/semaforo/rowsCopy.java</file>
+            <file>file:/C:/Users/maikolleon/Documents/NetBeansProjects/Semaforo/s2m1f4r4/src/semaforo/Semaforo.java</file>
         </group>
     </open-files>
 </project-private>
