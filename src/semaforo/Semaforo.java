@@ -404,7 +404,7 @@ public class Semaforo extends javax.swing.JFrame {
                 cellComponent.setBackground(colorImparCeldaWeeks);
 
             }
-            Font normal = new Font( "Arial",Font.PLAIN,9);
+            Font normal = new Font( "Arial",Font.BOLD,11);
             cellComponent.setFont(normal);//tipo de fuente
             
             if(column==0){
@@ -440,6 +440,54 @@ public class Semaforo extends javax.swing.JFrame {
                            max = max - ((max-min)/16)*(16-column-1);
                            table.setValueAt(decimales.format(min), row, column+1);
                            table.setValueAt(decimales.format(max), row, column+2);
+                           if(column==7){
+                                normal = new Font( "Arial",Font.PLAIN,18);
+                                cellComponent.setFont(normal);//tipo de fuente
+                                
+                                 valorCFD = 0.0;
+                               valorDiferencia = 0.0;
+                               String tempStrValCFD = "";
+                               String tempStrValPosicion = "";
+                               
+                               try {
+
+                                   //CFD
+                                   tempStrValCFD = TableTicker.getModel().getValueAt(row, 3).toString().replace(",", ".");
+
+                                   //POSICION
+                                   Object obj;
+                                   obj = TableTicker.getModel().getValueAt(row, 4); //.toString().replace(",", ".");
+
+                                   if (!tempStrValCFD.isEmpty()) {
+
+                                       valorCFD = Double.parseDouble(tempStrValCFD);
+
+                                       //RECOMENDACION
+                                       division = 14 * (1.0 * valorCFD) / 100;
+
+                                       if (obj != null) {
+                                           tempStrValPosicion = obj.toString().replace(",", ".");
+                                           if (!tempStrValPosicion.isEmpty()) {
+                                               division -= Double.parseDouble(tempStrValPosicion);
+                                           }
+                                       }
+
+                                       if (division < 0) {
+                                           division = 0.0;
+                                       }
+
+                                       table.setValueAt(division.intValue(), row, column);
+
+                                       normal = new Font("Arial", Font.PLAIN, 18);
+                                       cellComponent.setFont(normal);//tipo de fuente
+
+                                   }else{table.setValueAt("", row, column);}
+                               } catch (Exception e) {
+                                   e.printStackTrace();
+                               }
+                                
+                           }
+                           
                         }
                         
                    
@@ -451,6 +499,7 @@ public class Semaforo extends javax.swing.JFrame {
                         valorDiferencia = 0.0;
                         String tempStrValCFD = "";
                         String tempStrValPosicion = "";
+                        if(column<7)
                         try {
 
                             //CFD
@@ -985,6 +1034,7 @@ public class Semaforo extends javax.swing.JFrame {
                                         try {
                                             /*al hacer el ejecutable se debe cambiar a solo notificacion.mp3*/
                                             fis = new FileInputStream("C:\\Users\\maikolleon\\Documents\\NetBeansProjects\\Semaforo\\s2m1f4r4\\src\\semaforo\\resources\\notificacion.mp3");
+                                            //fis = new FileInputStream("notificacion.mp3");
                                             bis = new BufferedInputStream(fis);
                                             player = new Player(bis);
                                             player.play();
@@ -1708,20 +1758,17 @@ public class Semaforo extends javax.swing.JFrame {
         jLabel8.setText("jLabel8");
 
         jLabelPositionNum.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabelPositionNum.setForeground(new java.awt.Color(255, 255, 255));
         jLabelPositionNum.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelPositionNum.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabelPositionNum.setPreferredSize(new java.awt.Dimension(60, 60));
 
         jLabelInvested.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
-        jLabelInvested.setForeground(new java.awt.Color(255, 255, 255));
         jLabelInvested.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelInvested.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabelInvested.setPreferredSize(new java.awt.Dimension(60, 60));
 
         jLabelLuzPrincipal.setBackground(new java.awt.Color(0, 0, 255));
-        jLabelLuzPrincipal.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabelLuzPrincipal.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelLuzPrincipal.setFont(new java.awt.Font("Tahoma", 1, 30)); // NOI18N
         jLabelLuzPrincipal.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabelLuzPrincipal.setPreferredSize(new java.awt.Dimension(120, 200));
 
