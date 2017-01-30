@@ -45,17 +45,17 @@ public class Compare {
       lineCounter++;
       String s2 = in2.readLine();
       if(!s1.equals(s2)) {
-	System.out.println("Files ["+file1+"] and ["+file2+"] differ on line " 
+	//System.out.println("Files ["+file1+"] and ["+file2+"] differ on line " 
 			   +lineCounter);
-	System.out.println("One reads:  ["+s1+"].");
-	System.out.println("Other reads:["+s2+"].");
+	//System.out.println("One reads:  ["+s1+"].");
+	//System.out.println("Other reads:["+s2+"].");
 	return false;
       }
     }
     
     // the second file is longer
     if(in2.read() != -1) {
-      System.out.println("File ["+file2+"] longer than file ["+file1+"].");
+      //System.out.println("File ["+file2+"] longer than file ["+file1+"].");
       return false;
     }
     
@@ -109,11 +109,11 @@ private static final InputStream open(
       String s2 = in2.readLine();
 
       if (!s1.equals(s2)) {
-        System.out.println(
+        //System.out.println(
           "Files [" + file1 + "] and [" + file2 + "] differ on line "
           + lineCounter);
-        System.out.println("One reads:  [" + s1 + "].");
-        System.out.println("Other reads:[" + s2 + "].");
+        //System.out.println("One reads:  [" + s1 + "].");
+        //System.out.println("Other reads:[" + s2 + "].");
         outputFile(testClass, file1);
         outputFile(testClass, file2);
 
@@ -123,7 +123,7 @@ private static final InputStream open(
 
     // the second file is longer
     if (in2.read() != -1) {
-      System.out.println(
+      //System.out.println(
         "File [" + file2 + "] longer than file [" + file1 + "].");
       outputFile(testClass, file1);
       outputFile(testClass, file2);
@@ -146,24 +146,24 @@ private static final InputStream open(
 
     String s1;
     int lineCounter = 0;
-    System.out.println("--------------------------------");
-    System.out.println("Contents of " + file + ":");
+    //System.out.println("--------------------------------");
+    //System.out.println("Contents of " + file + ":");
 
     while ((s1 = in1.readLine()) != null) {
       lineCounter++;
-      System.out.print(lineCounter);
+      //System.out.print(lineCounter);
 
       if (lineCounter < 10) {
-        System.out.print("   : ");
+        //System.out.print("   : ");
       } else if (lineCounter < 100) {
-        System.out.print("  : ");
+        //System.out.print("  : ");
       } else if (lineCounter < 1000) {
-        System.out.print(" : ");
+        //System.out.print(" : ");
       } else {
-        System.out.print(": ");
+        //System.out.print(": ");
       }
 
-      System.out.println(s1);
+      //System.out.println(s1);
     }
     in1.close();
   }

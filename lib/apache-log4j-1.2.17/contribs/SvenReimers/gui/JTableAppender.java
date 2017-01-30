@@ -73,7 +73,7 @@ public class JTableAppender extends JTable {
 
   public
   Dimension getPreferredSize() {
-    System.out.println("getPreferredSize() called");
+    //System.out.println("getPreferredSize() called");
     return super.getPreferredSize();
   }
 
@@ -121,7 +121,7 @@ public class JTableAppender extends JTable {
     }
 
     long after = System.currentTimeMillis();
-    System.out.println("Time taken :"+ ((after-before)*1000/RUN));
+    //System.out.println("Time taken :"+ ((after-before)*1000/RUN));
 
   }
 
@@ -132,7 +132,7 @@ public class JTableAppender extends JTable {
 
     public
     Renderer() {
-      System.out.println("Render() called ----------------------");      
+      //System.out.println("Render() called ----------------------");      
     }
 
     public Component getTableCellRendererComponent(JTable table,
@@ -142,7 +142,7 @@ public class JTableAppender extends JTable {
 						   int row,
 						   int column) {
 
-      System.out.println(o + " ============== " + i++);
+      //System.out.println(o + " ============== " + i++);
       //LogLog.error("=======", new Exception());
       //setIcon(longIcon);
       if(value instanceof LoggingEvent) {
@@ -151,7 +151,7 @@ public class JTableAppender extends JTable {
 	String t = event.getThrowableInformation();
 	
 	if(t != null) {
-	  System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+	  //System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
 	  setText(str + Layout.LINE_SEP + t);
 	} else {	
 	  setText(str);
@@ -179,7 +179,7 @@ class JTableAppenderModel extends AbstractTableModel {
 
   public
   void add(LoggingEvent event) {
-    //System.out.println("JListViewModel.add called");
+    ////System.out.println("JListViewModel.add called");
     cb.add(event);
     int j = cb.length();
 
@@ -197,7 +197,7 @@ class JTableAppenderModel extends AbstractTableModel {
 
   //public
   //Class getColumnClass(int index) {
-  //  System.out.println("getColumnClass called " + index);
+  //  //System.out.println("getColumnClass called " + index);
   //  return LoggingEvent.class;
   //}
 
@@ -223,7 +223,7 @@ class JTableAddAction implements ActionListener {
     
   public
   void actionPerformed(ActionEvent e) {
-    System.out.println("Action occured");
+    //System.out.println("Action occured");
 
     LoggingEvent event = new LoggingEvent("x", cat, Priority.DEBUG, 
 					    "Message "+j, null);

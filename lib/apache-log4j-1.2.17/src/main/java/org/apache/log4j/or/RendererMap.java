@@ -144,10 +144,10 @@ public class RendererMap {
  */
   public
   ObjectRenderer get(Class clazz) {
-    //System.out.println("\nget: "+clazz);
+    ////System.out.println("\nget: "+clazz);
     ObjectRenderer r = null;
     for(Class c = clazz; c != null; c = c.getSuperclass()) {
-      //System.out.println("Searching for class: "+c);
+      ////System.out.println("Searching for class: "+c);
       r = (ObjectRenderer) map.get(c);
       if(r != null) {
 	return r;
@@ -160,7 +160,7 @@ public class RendererMap {
   }
 
   ObjectRenderer searchInterfaces(Class c) {
-    //System.out.println("Searching interfaces of class: "+c);
+    ////System.out.println("Searching interfaces of class: "+c);
 
     ObjectRenderer r = (ObjectRenderer) map.get(c);
     if(r != null) {

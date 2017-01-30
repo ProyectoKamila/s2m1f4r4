@@ -174,9 +174,8 @@ public class Controller {
                 public void callback_historico_cumulativo(String Valor, HashMap<Integer, HashMap<String, Double>> historico_valores_cumulativo
                 ) {
                     // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-
+                    ////System.out.println(Valor+":"+historico_valores_cumulativo.toString().replace("}", "}\n"));
                     settings.addTicker(historico_valores_cumulativo, Valor);
-
                     listener.addTickers();
                     synchronized (countLock) {
                         Controller.finish = true;

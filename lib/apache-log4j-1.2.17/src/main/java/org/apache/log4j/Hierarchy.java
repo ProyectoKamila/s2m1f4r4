@@ -126,7 +126,7 @@ public class Hierarchy implements LoggerRepository, RendererSupport, ThrowableRe
      @since 0.9.0 */
   public
   void clear() {
-    //System.out.println("\n\nAbout to clear internal hash table.");
+    ////System.out.println("\n\nAbout to clear internal hash table.");
     ht.clear();
   }
 
@@ -262,7 +262,7 @@ public class Hierarchy implements LoggerRepository, RendererSupport, ThrowableRe
  */
   public
   Logger getLogger(String name, LoggerFactory factory) {
-    //System.out.println("getInstance("+name+") called.");
+    ////System.out.println("getInstance("+name+") called.");
     CategoryKey key = new CategoryKey(name);
     // Synchronize to prevent write conflicts. Read conflicts (in
     // getChainedLevel method) are possible only if variable
@@ -280,7 +280,7 @@ public class Hierarchy implements LoggerRepository, RendererSupport, ThrowableRe
       } else if(o instanceof Logger) {
 	return (Logger) o;
       } else if (o instanceof ProvisionNode) {
-	//System.out.println("("+name+") ht.get(this) returned ProvisionNode");
+	////System.out.println("("+name+") ht.get(this) returned ProvisionNode");
 	logger = factory.makeNewLoggerInstance(name);
 	logger.setHierarchy(this);
 	ht.put(key, logger);
@@ -505,25 +505,25 @@ public class Hierarchy implements LoggerRepository, RendererSupport, ThrowableRe
     int length = name.length();
     boolean parentFound = false;
 
-    //System.out.println("UpdateParents called for " + name);
+    ////System.out.println("UpdateParents called for " + name);
 
     // if name = "w.x.y.z", loop thourgh "w.x.y", "w.x" and "w", but not "w.x.y.z"
     for(int i = name.lastIndexOf('.', length-1); i >= 0;
 	                                 i = name.lastIndexOf('.', i-1))  {
       String substr = name.substring(0, i);
 
-      //System.out.println("Updating parent : " + substr);
+      ////System.out.println("Updating parent : " + substr);
       CategoryKey key = new CategoryKey(substr); // simple constructor
       Object o = ht.get(key);
       // Create a provision node for a future parent.
       if(o == null) {
-	//System.out.println("No parent "+substr+" found. Creating ProvisionNode.");
+	////System.out.println("No parent "+substr+" found. Creating ProvisionNode.");
 	ProvisionNode pn = new ProvisionNode(cat);
 	ht.put(key, pn);
       } else if(o instanceof Category) {
 	parentFound = true;
 	cat.parent = (Category) o;
-	//System.out.println("Linking " + cat.name + " -> " + ((Category) o).name);
+	////System.out.println("Linking " + cat.name + " -> " + ((Category) o).name);
 	break; // no need to update the ancestors of the closest ancestor
       } else if(o instanceof ProvisionNode) {
 	((ProvisionNode) o).addElement(cat);
@@ -556,12 +556,12 @@ public class Hierarchy implements LoggerRepository, RendererSupport, ThrowableRe
   final
   private
   void updateChildren(ProvisionNode pn, Logger logger) {
-    //System.out.println("updateChildren called for " + logger.name);
+    ////System.out.println("updateChildren called for " + logger.name);
     final int last = pn.size();
 
     for(int i = 0; i < last; i++) {
       Logger l = (Logger) pn.elementAt(i);
-      //System.out.println("Updating child " +p.name);
+      ////System.out.println("Updating child " +p.name);
 
       // Unless this child already points to a correct (lower) parent,
       // make cat.parent point to l.parent and l.parent to cat.

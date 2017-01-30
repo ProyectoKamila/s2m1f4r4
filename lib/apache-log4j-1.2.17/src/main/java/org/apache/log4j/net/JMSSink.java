@@ -71,11 +71,11 @@ public class JMSSink implements javax.jms.MessageListener {
 
     BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
     // Loop until the word "exit" is typed
-    System.out.println("Type \"exit\" to quit JMSSink.");
+    //System.out.println("Type \"exit\" to quit JMSSink.");
     while(true){
       String s = stdin.readLine( );
       if (s.equalsIgnoreCase("exit")) {
-	System.out.println("Exiting. Kill the application if it does not exit "
+	//System.out.println("Exiting. Kill the application if it does not exit "
 			   + "due to daemon threads.");
 	return; 
       }

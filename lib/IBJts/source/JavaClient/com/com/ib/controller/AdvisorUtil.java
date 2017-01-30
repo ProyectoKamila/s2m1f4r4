@@ -266,7 +266,7 @@ public class AdvisorUtil {
 	}
 
 	private static void err(String line) {
-		System.out.println( "error " + line);
+		//System.out.println( "error " + line);
 	}
 
 

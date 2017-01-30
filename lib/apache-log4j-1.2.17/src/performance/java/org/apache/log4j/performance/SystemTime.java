@@ -35,10 +35,10 @@ public class SystemTime {
   public 
   void main(String[] args) {    
     double t = systemCurrentTimeLoop();
-    System.out.println("Average System.currentTimeMillis() call took " + t);
+    //System.out.println("Average System.currentTimeMillis() call took " + t);
 
     t = currentThreadNameloop();
-    System.out.println("Average Thread.currentThread().getName() call took " 
+    //System.out.println("Average Thread.currentThread().getName() call took " 
 		       + t);
     
   }

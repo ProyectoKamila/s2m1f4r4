@@ -76,7 +76,7 @@ public class NumberCruncherClient {
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     int i = 0;
     while (true) {
-      System.out.print("Enter a number to factor, '-1' to quit: ");      
+      //System.out.print("Enter a number to factor, '-1' to quit: ");      
       try {
 	i = Integer.parseInt(in.readLine());
       }
@@ -84,18 +84,18 @@ public class NumberCruncherClient {
 	e.printStackTrace();
       }
       if(i == -1) {
-	System.out.print("Exiting loop.");
+	//System.out.print("Exiting loop.");
 	return;
       }
       else {
 	try {
-	  System.out.println("Will attempt to factor "+i);
+	  //System.out.println("Will attempt to factor "+i);
 	  int[] factors = nc.factor(i);
-	  System.out.print("The factors of "+i+" are");
+	  //System.out.print("The factors of "+i+" are");
 	  for(int k=0; k < factors.length; k++) {
-	    System.out.print(" " + factors[k]);
+	    //System.out.print(" " + factors[k]);
 	  }
-	  System.out.println(".");
+	  //System.out.println(".");
 	}
 	catch(RemoteException e) {
 	  System.err.println("Could not factor "+i);

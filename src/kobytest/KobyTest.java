@@ -1,4 +1,4 @@
-/*
+  /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -16,6 +16,26 @@ package kobytest;
  */
 
 import com.ib.client.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,12 +44,33 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import static kobytest.KobyTest.miPortfolioUpdates;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.title.TextTitle;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.ui.HorizontalAlignment;
 import semaforo.Controller;
+import semaforo.Curl;
+import semaforo.DDBB;
+import semaforo.Groups;
+import semaforo.HistoricalDataReq;
+import semaforo.Semaforo;
+import static semaforo.Semaforo.countBear;
+import static semaforo.Semaforo.countBull;
+import static semaforo.Semaforo.countCfd;
+import static semaforo.Semaforo.jPanel3;
+import static semaforo.Semaforo.panel;
+import semaforo.Settings;
 
 
 /**
@@ -57,15 +98,19 @@ import semaforo.Controller;
 
  */
 public abstract class KobyTest {
-
-    
+    public static String posiciones = "";
+    public static HistoricalDataReq[] peticionesHistorical = new HistoricalDataReq[100];
+    public static boolean newTicker = false; 
+    public static String strSemana, strWeek;
+    public static int id_ant=-1, count = -1;
+    static String symbol_current = "";
     public static Boolean isDebugConsoleMode = false;
     
-    static EClientSocket connection;
+    public static EClientSocket connection;
     static EWrapper ewrapper;
 
     static String[] valores = {}; //interna
-    static int total_weeks_ago = 2;
+    public static int total_weeks_ago = 0;
 
     static HashMap<Integer, String> valores_tabla = new HashMap<Integer, String>();
 
@@ -77,6 +122,13 @@ public abstract class KobyTest {
 
     static ListenerComprobarSimbolo listenerExiste = null;
     static ListenerConnectionConsole listener = null;
+    
+    public static String ticP = "";
+    public static double strikeP = 0.0;
+    public static int positionP = 0;
+    public static int segundaPasada = 0;
+    public static boolean graficopaint =false;
+    public static boolean graficopaintP =false;
     
     /*new ListenerConnectionConsole() {
 
@@ -218,6 +270,7 @@ public abstract class KobyTest {
 
             @Override
             public void connectionClosed() {
+                //JOptionPane.showMessageDialog(null,"Tws cerro flujo de datos", "DATA NULL", JOptionPane.ERROR_MESSAGE);
                 System.out.println("Connection closed");
                 //   throw new UnsupportedOperationException("Not connectionClosed yet."); //To change body of generated methods, choose Tools | Templates.
             }
@@ -256,13 +309,13 @@ public abstract class KobyTest {
 
             @Override
             public void tickGeneric(int tickerId, int tickType, double value) {
-                if (isDebugConsoleMode) System.out.println("Returned tickGeneric for :" + tickerId + ". tickType:" + tickType + ". value" + value);
+                System.out.println("Returned tickGeneric for :" + tickerId + ". tickType:" + tickType + ". value" + value);
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override
             public void tickString(int tickerId, int tickType, String value) {
-                if (isDebugConsoleMode) System.out.println("Returned tickString for :" + tickerId + ". tickType:" + tickType + ". value" + value);
+                System.out.println("Returned tickString for :" + tickerId + ". tickType:" + tickType + ". value" + value);
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
@@ -331,12 +384,7 @@ public abstract class KobyTest {
 // ==================================================  
 // ==================================================      
 // ==================================================    
-            @Override
-            public void updatePortfolio(Contract contract, int position, double marketPrice, double marketValue, double averageCost, double unrealizedPNL, double realizedPNL, String accountName) {
-                              
-                if (semaforo.Semaforo.isDebugMode) System.out.println("TWSClientInterface:updatePortfolio: "+accountName +" " + contract.m_symbol +" " +  position + " " + marketPrice + " " + marketValue + " " + averageCost + " " + unrealizedPNL + " " + realizedPNL);
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
+            
 // ==================================================  
 // ==================================================  
 // ==================================================      
@@ -357,25 +405,28 @@ public abstract class KobyTest {
             public void nextValidId(int orderId) {
                 System.out.println("Ya estamos coenctados con el orderId: " + orderId);
 
-                conexion_aceptada_wrapper();
-
-                //top_data(1); 
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                try {
+                    conexion_aceptada_wrapper();
+                } catch (SQLException ex) {
+                    Logger.getLogger(KobyTest.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ParseException ex) {
+                    Logger.getLogger(KobyTest.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             @Override
             public void contractDetails(int reqId, ContractDetails contractDetails) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+contractDetails.m_summary.m_secType); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override
             public void bondContractDetails(int reqId, ContractDetails contractDetails) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override
             public void contractDetailsEnd(int reqId) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
 
             @Override
@@ -416,24 +467,59 @@ public abstract class KobyTest {
                 System.out.println("Received FA");
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
-
+ 
             @Override
             public void historicalData(int reqId, String date, double open, double high, double low, double close, int volume, int count, double WAP, boolean hasGaps) {
-
-                System.out.println("-------------------------------------");
-                System.out.println("HISTORICAL DATA for order_id: " + reqId);
-                System.out.println("Historical Date: " + date);
-                System.out.println("Historical Open: " + open);
-                System.out.println("Historical high: " + high);
-                System.out.println("Historical low: " + low);
-                System.out.println("Historical close: " + close);
-                System.out.println("Historical volume: " + volume);
-                System.out.println("Historical count: " + count);
-                System.out.println("Historical WAP: " + WAP);
-                System.out.println("Historical hasGaps: " + hasGaps);
-                System.out.println("-------------------------------------");
+                if(count>=0){
+                    if(!date.equals(strWeek)){
+                        Calendar cal = Calendar.getInstance();
+                        int current_day = cal.get(Calendar.DAY_OF_MONTH);
+                        int current_month = cal.get(Calendar.MONTH) + 1;
+                        int current_year = cal.get(Calendar.YEAR);
+                        String fecha = current_year+"-"+current_month+"-"+current_day;
+                        DDBB.deleteLowHighFecha(fecha);
+                        DDBB.insertLowHigh(symbol_current, fecha, ""+low, ""+high);
+                        System.out.println("-------------------------------------"+strWeek);
+                        System.out.println("HISTORICAL DATA for order_id: " + reqId);
+                        System.out.println("Historical Date: " + date);
+                        System.out.println("Historical Open: " + open);
+                        System.out.println("Historical high: " + high);
+                        System.out.println("Historical low: " + low);
+                        System.out.println("Historical close: " + close);
+                        System.out.println("Historical volume: " + volume);
+                        System.out.println("Historical count: " + count);
+                        System.out.println("Historical WAP: " + WAP);
+                        System.out.println("Historical hasGaps: " + hasGaps);
+                        System.out.println("-------------------------------------");
+                    }else{
+                        ResultSet ticks = DDBB.Tickers();
+                        try {
+                            while(ticks.next()){
+                            if(reqId==Settings.getTickerID(ticks.getString("name"))){
+                                DDBB.updateHighHighTicker(ticks.getString("name"), high+"");
+                                DDBB.updateLowLowTicker(ticks.getString("name"), low+"");
+                                System.out.println(ticks.getString("name")+"-------------------------------------"+strWeek);
+                                System.out.println("HISTORICAL DATA for order_id: " + reqId);
+                                System.out.println("Historical Date: " + date);
+                                System.out.println("Historical Open: " + open);
+                                System.out.println("Historical high: " + high);
+                                System.out.println("Historical low: " + low);
+                                System.out.println("Historical close: " + close);
+                                System.out.println("Historical volume: " + volume);
+                                System.out.println("Historical count: " + count);
+                                System.out.println("Historical WAP: " + WAP);
+                                System.out.println("Historical hasGaps: " + hasGaps);
+                                System.out.println("-------------------------------------");
+                            }    
+                            }
+                        } catch (SQLException ex) {
+                            Logger.getLogger(KobyTest.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        
+                    }
+                }
                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                wrapper_historico(reqId, date, high, low, open, close);
+                //wrapper_historico(reqId, date, high, low, open, close);
             }
 
             @Override
@@ -513,33 +599,102 @@ public abstract class KobyTest {
             
             int numPosiciones = 0;
             public int numPosicionesTotal = 0;
-            public Map valorPosiciones = new HashMap();    
+            public Map valorPosiciones = new HashMap();
+            
+            @Override
+            public void updatePortfolio(Contract contract, int position, double marketPrice, double marketValue, double averageCost, double unrealizedPNL, double realizedPNL, String accountName) {
+                if(contract.m_secType.equals("CFD")){
+                    Semaforo.countCfd++;
+                }
+                
+                   
+                      if(ticP.isEmpty()){
+                          ticP = contract.m_symbol;
+                          positionP = position;
+                          strikeP = contract.m_strike;
+                      }else{
+                          if(ticP.equals(contract.m_symbol)){
+                             if(strikeP>contract.m_strike){
+                                 if(positionP>0){
+                                     //el mayor es positivo Bear  
+                                     Semaforo.countBear++;
+                                     System.out.println(">>>>>countBear>>>>>"+Semaforo.countBear);
+                                 }else{
+                                     //ll mayor es negativo Bull
+                                     Semaforo.countBull++;
+                                     System.out.println(">>>>>countBull>>>>>"+Semaforo.countBull);
+                                 }
+                             }else{
+                                 if(position>0){
+                                     //el mayor es positivo Bear  
+                                     Semaforo.countBear++;
+                                     System.out.println(">>>>>countBear>>>>>"+Semaforo.countBear);
+                                 }else{
+                                     //ll mayor es negativo Bull
+                                     Semaforo.countBull++;
+                                     System.out.println(">>>>>countBull>>>>>"+Semaforo.countBull);
+                                 }
+                             }
+                          }else{
+                              ticP = contract.m_symbol;
+                              positionP = position;
+                              strikeP = contract.m_strike;
+                          }
+                      }
+                  
+                
+                
+   
+      
+    
+                System.out.println("TWSClientInterface:updatePortfolio: "+accountName +" " + contract.m_secType +" " + contract.m_symbol +" " +  position + " " + marketPrice + " " + marketValue + " " + averageCost + " " + unrealizedPNL + " " + realizedPNL);
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                
+               
+                
+                
+            }
        
             @Override
             public void position(String account, Contract contract, int pos, double avgCost) {
-                semaforo.LogFile.logFile("#### INVOCANDO position: " + contract.m_symbol + " y posicion: " + pos);
+                
 
+                semaforo.LogFile.logFile("#### INVOCANDO position: " + contract.m_symbol + " y posicion: " + pos);
+                double avg= (avgCost * pos)+0.2;
+                ResultSet resGruposOld = DDBB.GruposTickersTicker(contract.m_symbol);
+                try {
+                    if(resGruposOld.next()) {
+                        
+                        DDBB.updateGroupTickerInvertido(contract.m_symbol, (int) avg);
+
+                    }else{
+                        DDBB.insertGroupsTickers("", contract.m_symbol, (int) avg);
+                    }
+                } catch (SQLException ex) {
+                           Logger.getLogger(Groups.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            
 //                System.out.println("ESTE ES EL POS TRAIDO POR TWS: ACCION: " + contract.m_symbol + " y posicion: " + pos);
                                 
-//                String msg = " ---- Position begin ----\n"
-//                + "account = " + account + "\n"
-//                + "conid = " + contract.m_conId + "\n"
-//                + "symbol = " + contract.m_symbol + "\n"
-//                + "secType = " + contract.m_secType + "\n"
-//                + "expiry = " + contract.m_expiry + "\n"
-//                + "strike = " + contract.m_strike + "\n"
-//                + "right = " + contract.m_right + "\n"
-//                + "multiplier = " + contract.m_multiplier + "\n"
-//                + "exchange = " + contract.m_exchange + "\n"
-//                + "primaryExch = " + contract.m_primaryExch + "\n"
-//                + "currency = " + contract.m_currency + "\n"
-//                + "localSymbol = " + contract.m_localSymbol + "\n"
-//                + "tradingClass = " + contract.m_tradingClass + "\n"
-//                + "position = " + Util.IntMaxString(pos) + "\n"
-//                + "averageCost = " + Util.DoubleMaxString(avgCost) + "\n"
-//                + " ---- Position end ----\n";
+                String msg = " ---- Position begin ----\n"
+               + "account = " + account + "\n"
+                + "conid = " + contract.m_conId + "\n"
+                + "symbol = " + contract.m_symbol + "\n"
+                + "secType = " + contract.m_secType + "\n"
+                + "expiry = " + contract.m_expiry + "\n"
+                + "strike = " + contract.m_strike + "\n"
+                + "right = " + contract.m_right + "\n"
+                + "multiplier = " + contract.m_multiplier + "\n"
+                + "exchange = " + contract.m_exchange + "\n"
+                + "primaryExch = " + contract.m_primaryExch + "\n"
+                + "currency = " + contract.m_currency + "\n"
+                + "localSymbol = " + contract.m_localSymbol + "\n"
+                + "tradingClass = " + contract.m_tradingClass + "\n"
+                + "position = " + Util.IntMaxString(pos) + "\n"
+                + "averageCost = " + Util.DoubleMaxString(avgCost) + "\n"
+                + " ---- Position end ----\n";
                 
-//                if (isDebugConsoleMode) System.out.println(msg);
+                System.out.println(msg);
                 
                 
                 if( pos > 0 ) {                
@@ -553,12 +708,73 @@ public abstract class KobyTest {
 
             @Override
             public void positionEnd() {
-                
+  
                 semaforo.LogFile.logFile("#### INVOCANDO positionEnd");
+                segundaPasada++;
+//                    
+               connection.reqAccountUpdates(false, "U1523016");
+
+                numPosicionesTotal = numPosiciones;
+                if(segundaPasada>1 && !graficopaint){
+                    Semaforo.cfd = false;
+                    Semaforo.bull = false;
+                    Semaforo.bear = false;
+                   
+                    DecimalFormat df = new DecimalFormat();
+                    df.setMaximumFractionDigits(2);
+                    double cfd=0.0;
+                    double bull=0.0;
+                    double bear=0.0;
+                    if(countCfd!=0)cfd = (countCfd*100)/(countBear+countBull+countCfd);
+                    if(countBull!=0)bull = ((countBull*100)/(countBear+countBull+countCfd));
+                    if(countBear!=0)bear = ((countBear*100)/(countBear+countBull+countCfd));
+                    Semaforo.l1.setText("CFD ("+String.format("%.2f", cfd)+"%)");
+                    Semaforo.l2.setText("BULL ("+String.format("%.2f", bull)+"%)");
+                    Semaforo.l3.setText("BEAR ("+String.format("%.2f", bear)+"%)");
+                    DefaultPieDataset pieDataset = new DefaultPieDataset();
+                    pieDataset.setValue("CFD ("+cfd+"%)", new Integer((int)countCfd));
+                    pieDataset.setValue("BULL ("+bull+"%)", new Integer((int)countBull));
+                    pieDataset.setValue("BEAR ("+bear+"%)", new Integer((int)countBear));
+                    JFreeChart chart = null;
+                    chart = ChartFactory.createPieChart(
+                        "",  // chart title
+                        pieDataset,            // data
+                        false,              // no legend
+                        false,               // tooltips
+                        false               // no URL generation
+                    );
+                    Semaforo.SemaforoGrafico(chart);
+                    
+                    graficopaint=true;
+                    Semaforo.countBear=0.0;
+                    Semaforo.countBull=0.0;
+                    Semaforo.countCfd=0.0;
+                    System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::::::::"+segundaPasada+Semaforo.countBear+Semaforo.countBull+Semaforo.countCfd);
+                }else if(segundaPasada>=2){
+                    Semaforo.cfd = false;
+                    Semaforo.bull = false;
+                    Semaforo.bear = false;
+                    
+                   
+                    Semaforo.editGrafico();
+                    Semaforo.countBear=0.0;
+                    Semaforo.countBull=0.0;
+                    Semaforo.countCfd=0.0;
+//                    Semaforo.countBear=Semaforo.countBear+5;
+                }
 
                 
-                if (isDebugConsoleMode) System.out.println("TWSClientInterface:positionEnd()  was called");
-                numPosicionesTotal = numPosiciones;
+                 
+                 
+                System.out.println("+++++"+posiciones);
+                if(semaforo.Semaforo.edit == 0){
+                    
+                    Semaforo.finalcountBear = Semaforo.countBear;
+                    Semaforo.finalcountBull = Semaforo.countBull;
+                    Semaforo.finalcountCfd = Semaforo.countCfd;
+                    
+                }
+                semaforo.Semaforo.edit = 1;
                 listener.guardaNumPos(numPosicionesTotal);
                 listener.guardaPosiciones(valorPosiciones);
                 valorPosiciones = new HashMap(); // %30
@@ -640,12 +856,10 @@ public abstract class KobyTest {
         System.out.println("Conexion iniciada");
     }
 
-    public static void conexion_aceptada_wrapper() {
+    public static void conexion_aceptada_wrapper() throws SQLException, ParseException {
         //bucle conectados
         
         semaforo.LogFile.logFile("#### INVOCANDO conexion_aceptada_wrapper");
-
-        
         System.out.println("conexion aceptada");
         connection.reqCurrentTime();
         initial_setup(total_weeks_ago, valores_init);
@@ -704,37 +918,15 @@ public abstract class KobyTest {
         }
     }
 
-    public static void initial_setup(int weeks, String[] valores_init) {
+    public static void initial_setup(int weeks, String[] valores_init) throws SQLException, ParseException {
 
         for (int i = 0; i < valores_init.length; i++) {
             anyadir_simbolo(valores_init[i]);
         }
 
-        /*
-         // guardar hashmap id - valor
-         //valores_tabla.put(1, "KO");
-         //valores_tabla.put(2, "IBM");
-         for (int i = 0; i < valores.length; i++) {
-         System.out.println("Insertando " + i + " a " + valores[i]);
-         valores_tabla.put(i, valores[i]);
-         historico_valores.put(valores[i], new HashMap<Integer, HashMap<String, Double>>());
-         historico_valores_cumulativo.put(valores[i], new HashMap<Integer, HashMap<String, Double>>());
-         }
-
-         //get the history                
-         Iterator it = valores_tabla.entrySet().iterator();
-         while (it.hasNext()) {
-         HashMap.Entry pair = (HashMap.Entry) it.next();
-         System.out.println(pair.getKey() + " = " + pair.getValue());
-         pedir_historico((int) pair.getKey(), (String) pair.getValue(), weeks);            //10 weeks ago
-         //historico(2, "KO", 3);
-         // it.remove(); 
-         }
-         */
     }
 
-    public static void anyadir_simbolo(String simbolo) {
-
+    public static void anyadir_simbolo(String simbolo) throws SQLException, ParseException {
         int new_pos = valores_tabla.size();
         if (semaforo.Semaforo.isDebugMode) System.out.println("Insertando " + simbolo + " at" + new_pos);
         String[] old_valores = valores;
@@ -749,12 +941,13 @@ public abstract class KobyTest {
         historico_valores.put(simbolo, new HashMap<Integer, HashMap<String, Double>>());
         historico_valores_cumulativo.put(simbolo, new HashMap<Integer, HashMap<String, Double>>());
 
-//        pedir_historico(new_pos, simbolo, total_weeks_ago);
+        pedir_historico(new_pos, simbolo, total_weeks_ago);
         pedir_precios(new_pos, simbolo);
+        Curl.jsonDecode(Curl.preciosTicker16d(simbolo), simbolo);
     }
 
     public static void pedir_precios(int id_valor, String symbol) {
-        if (semaforo.Semaforo.isDebugMode) System.out.println("Requesting top data for :" + id_valor);
+        System.out.println("Requesting top data for :" + id_valor);
         Contract contract = new Contract();
         //contract.m_comboLegs
         //contract.m_comboLegsDescrip
@@ -786,7 +979,7 @@ public abstract class KobyTest {
 
     }
 
-    public static void pedir_historico(int id_valor, String symbol, int weeks_ago) {
+    public static void pedir_historico(final int id_valor, String symbol, int weeks_ago) throws SQLException, ParseException {
 
         System.out.println("Requesting historic data for :" + id_valor);
 
@@ -796,37 +989,21 @@ public abstract class KobyTest {
         int current_day = cal.get(Calendar.DAY_OF_MONTH);
         int current_month = cal.get(Calendar.MONTH) + 1;
         int current_year = cal.get(Calendar.YEAR);
-
+        
         System.out.println("Current day is " + current_day);
         System.out.println("Current week is " + current_week);
 
-        String year = "2015";
-        String month = "01";
+        String year = ""+current_year;
+        if(current_month==1) current_month=12;
+        String month = ""+current_month;
         String day = "01";
 
         for (int i = 0; i < weeks_ago; i++) {
             System.out.println("i = " + i + ". id_valor=" + id_valor + ". valorestabla[id_valor]" + valores_tabla.get(id_valor));
-            historico_valores.get(valores_tabla.get(id_valor)).put(i, null); //new HashMap<String,Double>());
-//            Calendar cal_week = Calendar.getInstance();
-//            cal_week.set(Calendar.WEEK_OF_YEAR, current_week - i);
-//            cal_week.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-//            Date that_date = cal_week.getTime();
-//            int y = cal_week.get(Calendar.YEAR);
-//            int d = cal_week.get(Calendar.DAY_OF_MONTH);
-//            int m = cal_week.get(Calendar.MONTH) + 1; //enero es 0
-//            year = String.valueOf(y);
-//            day = String.valueOf(d);
-//            if (d < 10) {
-//                day = "0" + day;
-//            }
-//            month = String.valueOf(m);
-//            if (m < 10) {
-//                month = "0" + month;
-//            }
-//            System.out.println("WEEK " + (current_week - i) + ". Sunday " + i + " weeks ago was " + that_date.toString());
+            historico_valores.get(valores_tabla.get(id_valor)).put(i, null); 
         }
 
-        Contract contract = new Contract();
+        final Contract contract = new Contract();
         //contract.m_comboLegs
         //contract.m_comboLegsDescrip
         //contract.m_conId = 11;
@@ -880,24 +1057,116 @@ public abstract class KobyTest {
         if (current_day < 10) {
             current_day_str = "0" + current_day_str;
         }
-
+        
+        Calendar c = Calendar.getInstance();
+        Calendar c1 = Calendar.getInstance();
+        c.add(Calendar.DATE, 0);
+        SimpleDateFormat d = new SimpleDateFormat("yyyyMMdd");
+        Date date = c.getTime();
+        Date dateW = c1.getTime();
+        strSemana = d.format(date);
+        strWeek = d.format(dateW);
+        
+    
+                           
         Calendar calendar = Calendar.getInstance(Locale.forLanguageTag("en-US"));
         calendar.setTimeZone(TimeZone.getTimeZone("America/New_York"));
         String hour = calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + ":00";
-//        semana = current_year_str + current_month_str + current_day_str + " "+hour+" America/New_York";//EST
-        semana = current_year_str + current_month_str + current_day_str + " 09:00:00 EST";
-
-        System.out.println("Requestion values for " + semana);
-        String duracion = weeks_ago + " W"; // pedimos todas las semanas
-        String barSizeSetting = "1 day";
-        String whatToShow = "TRADES";
-        int useRTH = 1; //only data that falls within regular trading hours.
-        int formatDate = 1;//1 - dates applying to bars returned in the format:yyyymmdd{space}{space}hh:mm:dd       2 - dates are returned as a long integer specifying the number of seconds since 1/1/1970 GMT.
+        //semana = current_year_str + current_month_str + current_day_str + " "+hour+" America/New_York";//EST
+        semana = strSemana + " 09:00:00 EST";
+        final String semanaTimer =  semana;
+        System.out.println("Requestion values for " + strSemana);
+        final String duracion = 1 + " D"; // pedimos todas las semanas
+        final String duracionTimer = 1 + " D"; // pedimos todas las semanas
+        final String barSizeSetting = "1 day";
+        final String whatToShow = "TRADES";
+        final int useRTH = 1; //only data that falls within regular trading hours.
+        final int formatDate = 1;//1 - dates applying to bars returned in the format:yyyymmdd{space}{space}hh:mm:dd       2 - dates are returned as a long integer specifying the number of seconds since 1/1/1970 GMT.
 //        List chartOptions = null;
-        Vector chartOptions = new Vector();
-
-        connection.reqHistoricalData(id_valor, contract, semana, duracion, barSizeSetting, whatToShow, useRTH, formatDate, chartOptions);
+        final Vector chartOptions = new Vector();
+        symbol_current= symbol;
+        
+        String fecha = current_year+"-"+current_month+"-"+current_day;
+//        ResultSet exsiste = DDBB.lowHighFecha(fecha);
+//        ResultSet exsisteTicker = DDBB.lowHighFechaName(fecha, symbol);d?
+        count++;
+        HistoricalDataReq historial = new HistoricalDataReq();
+        peticionesHistorical[count].id = id_valor;
+        peticionesHistorical[count].contract = contract;
+        peticionesHistorical[count].endDateTime = semana;
+        peticionesHistorical[count].durationStr = duracion;
+        peticionesHistorical[count].barSizeSetting = barSizeSetting;
+        peticionesHistorical[count].whatToShow = whatToShow;
+        peticionesHistorical[count].useRTH = useRTH;
+        peticionesHistorical[count].formatDate = formatDate;
+        peticionesHistorical[count].chartOptions = chartOptions;
+        peticionesHistorical[count].ticker = symbol;
+        
+       // peticionesHistorical[count] = historial;
+        
+        
+        
+        System.out.println("--------------------------------------------------------------------------------------"+historial.id+" "+symbol);
+        
+        
+//       connection.reqHistoricalData(id_valor, contract, semanaTimer, duracion, barSizeSetting, whatToShow, useRTH, formatDate, chartOptions);
+               
+        
+        
+//        try {
+//
+//            Thread t = new Thread(new Runnable() {
+//
+//                @Override
+//                public void run() { 
+//                    int num = 1000;
+//                        ResultSet dat = DDBB.TickersAll();
+//                    try {
+//                        Thread.sleep((int)(Math.random()*((16000*num)-1000+1)+1000));
+//                    } catch (InterruptedException ex) {
+//                        Logger.getLogger(KobyTest.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                        
+//                    try {
+//                        if(dat.next())num=dat.getInt("id");
+//                    } catch (SQLException ex) {
+//                        Logger.getLogger(KobyTest.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                       Timer timer = new Timer ((int)(Math.random()*((16000*num)-1000+1)+1000), new ActionListener () { 
+//                        public void actionPerformed(ActionEvent e) 
+//                        { 
+//                            connection.reqHistoricalData(id_valor, contract, semanaTimer, duracionTimer, barSizeSetting, whatToShow, useRTH, formatDate, chartOptions);
+//                         } 
+//                        }); 
+//                        timer.start();
+//                   
+//                }
+//            });
+//            t.start();
+//
+//        } catch (Exception ex) {
+//            Logger.getLogger(Semaforo.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        id_ant = id_valor;
+        
+        
+//        connection.reqHistoricalData(id_valor, contract, semana, "300 S", "1 secs", whatToShow, useRTH, formatDate, chartOptions);
+//        if(!exsiste.next()){ System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+//            DDBB.deleteLowHigh();
+//            connection.reqHistoricalData(id_valor, contract, semana, duracion, barSizeSetting, whatToShow, useRTH, formatDate, chartOptions);
+//        }else if(newTicker){
+//            System.out.println("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+//            connection.reqHistoricalData(id_valor, contract, semana, duracion, barSizeSetting, whatToShow, useRTH, formatDate, chartOptions);
+//            newTicker = false;
+//        }else if(!exsisteTicker.next()){
+//            System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+//            connection.reqHistoricalData(id_valor, contract, semana, duracion, barSizeSetting, whatToShow, useRTH, formatDate, chartOptions);
+//            newTicker = false;
+//        }
+        
     }
+    
+    
 
     private final static int BID = 1;
     private final static int LAST = 4;

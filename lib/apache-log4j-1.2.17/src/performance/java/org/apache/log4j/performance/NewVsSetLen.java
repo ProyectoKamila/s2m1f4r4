@@ -166,15 +166,15 @@ public class NewVsSetLen {
     int t;
 
     for(int len = SBUF_LEN; len <= BIGBUF_LEN; len*=4, RUN_LENGTH /= 4) {
-      System.out.println("<td>"+len+"\n");
+      //System.out.println("<td>"+len+"\n");
       for(int second = 0; second < 16;) {
-	System.out.println("SECOND loop="+second +", RUN_LENGTH="
+	//System.out.println("SECOND loop="+second +", RUN_LENGTH="
 			   +RUN_LENGTH+", len="+len);
 	t = (int)newBuffer(len, second);
 
-	System.out.print("<td>" + t);
+	//System.out.print("<td>" + t);
 	t = (int)setLen(len, second);
-	System.out.println(" <td>" + t + " \n");
+	//System.out.println(" <td>" + t + " \n");
 	if(second == 0) {
 	  second = 1;
 	} else {

@@ -88,7 +88,7 @@ public class TextPaneAppender extends AppenderSkeleton {
       URL url = ClassLoader.getSystemResource(path);
       img = (Image) (Toolkit.getDefaultToolkit()).getImage(url);
     } catch (Exception e) {
-      System.out.println("Exception occured: " + e.getMessage() + 
+      //System.out.println("Exception occured: " + e.getMessage() + 
 			 " - " + e );   
     }	
     return (img);

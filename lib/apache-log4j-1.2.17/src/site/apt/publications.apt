@@ -27,7 +27,7 @@ Books
 	
 Articles:
 
- * Vipan Singla.  Don't Use System.out.println! Use Log4j.  
+ * Vipan Singla.  Don't Use //System.out.println! Use Log4j.  
 		   {{{http://www.vipan.com/htdocs/log4jhelp.html}http://www.vipan.com/htdocs/log4jhelp.html}}.
         
  * Vikran Goyal.  Build Flexible Logs With log4j.

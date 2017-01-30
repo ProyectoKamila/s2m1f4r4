@@ -136,7 +136,7 @@
 <a name="126" href="#126">126</a> <em class="jxr_javadoccomment">     @since 0.9.0 */</em>
 <a name="127" href="#127">127</a>   <strong class="jxr_keyword">public</strong>
 <a name="128" href="#128">128</a>   <strong class="jxr_keyword">void</strong> clear() {
-<a name="129" href="#129">129</a>     <em class="jxr_comment">//System.out.println("\n\nAbout to clear internal hash table.");</em>
+<a name="129" href="#129">129</a>     <em class="jxr_comment">////System.out.println("\n\nAbout to clear internal hash table.");</em>
 <a name="130" href="#130">130</a>     ht.clear();
 <a name="131" href="#131">131</a>   }
 <a name="132" href="#132">132</a> 
@@ -272,7 +272,7 @@
 <a name="262" href="#262">262</a> <em class="jxr_javadoccomment"> */</em>
 <a name="263" href="#263">263</a>   <strong class="jxr_keyword">public</strong>
 <a name="264" href="#264">264</a>   <a href="../../../org/apache/log4j/Logger.html">Logger</a> getLogger(String name, <a href="../../../org/apache/log4j/spi/LoggerFactory.html">LoggerFactory</a> factory) {
-<a name="265" href="#265">265</a>     <em class="jxr_comment">//System.out.println("getInstance("+name+") called.");</em>
+<a name="265" href="#265">265</a>     <em class="jxr_comment">////System.out.println("getInstance("+name+") called.");</em>
 <a name="266" href="#266">266</a>     <a href="../../../org/apache/log4j/CategoryKey.html">CategoryKey</a> key = <strong class="jxr_keyword">new</strong> <a href="../../../org/apache/log4j/CategoryKey.html">CategoryKey</a>(name);
 <a name="267" href="#267">267</a>     <em class="jxr_comment">// Synchronize to prevent write conflicts. Read conflicts (in</em>
 <a name="268" href="#268">268</a>     <em class="jxr_comment">// getChainedLevel method) are possible only if variable</em>
@@ -290,7 +290,7 @@
 <a name="280" href="#280">280</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong>(o instanceof <a href="../../../org/apache/log4j/Logger.html">Logger</a>) {
 <a name="281" href="#281">281</a> 	<strong class="jxr_keyword">return</strong> (Logger) o;
 <a name="282" href="#282">282</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (o instanceof ProvisionNode) {
-<a name="283" href="#283">283</a> 	<em class="jxr_comment">//System.out.println("("+name+") ht.get(this) returned ProvisionNode");</em>
+<a name="283" href="#283">283</a> 	<em class="jxr_comment">////System.out.println("("+name+") ht.get(this) returned ProvisionNode");</em>
 <a name="284" href="#284">284</a> 	logger = factory.makeNewLoggerInstance(name);
 <a name="285" href="#285">285</a> 	logger.setHierarchy(<strong class="jxr_keyword">this</strong>);
 <a name="286" href="#286">286</a> 	ht.put(key, logger);
@@ -515,25 +515,25 @@
 <a name="505" href="#505">505</a>     <strong class="jxr_keyword">int</strong> length = name.length();
 <a name="506" href="#506">506</a>     <strong class="jxr_keyword">boolean</strong> parentFound = false;
 <a name="507" href="#507">507</a> 
-<a name="508" href="#508">508</a>     <em class="jxr_comment">//System.out.println("UpdateParents called for " + name);</em>
+<a name="508" href="#508">508</a>     <em class="jxr_comment">////System.out.println("UpdateParents called for " + name);</em>
 <a name="509" href="#509">509</a> 
 <a name="510" href="#510">510</a>     <em class="jxr_comment">// if name = "w.x.y.z", loop thourgh "w.x.y", "w.x" and "w", but not "w.x.y.z"</em>
 <a name="511" href="#511">511</a>     <strong class="jxr_keyword">for</strong>(<strong class="jxr_keyword">int</strong> i = name.lastIndexOf('.', length-1); i &gt;= 0;
 <a name="512" href="#512">512</a> 	                                 i = name.lastIndexOf('.', i-1))  {
 <a name="513" href="#513">513</a>       String substr = name.substring(0, i);
 <a name="514" href="#514">514</a> 
-<a name="515" href="#515">515</a>       <em class="jxr_comment">//System.out.println("Updating parent : " + substr);</em>
+<a name="515" href="#515">515</a>       <em class="jxr_comment">////System.out.println("Updating parent : " + substr);</em>
 <a name="516" href="#516">516</a>       <a href="../../../org/apache/log4j/CategoryKey.html">CategoryKey</a> key = <strong class="jxr_keyword">new</strong> <a href="../../../org/apache/log4j/CategoryKey.html">CategoryKey</a>(substr); <em class="jxr_comment">// simple constructor</em>
 <a name="517" href="#517">517</a>       Object o = ht.get(key);
 <a name="518" href="#518">518</a>       <em class="jxr_comment">// Create a provision node for a future parent.</em>
 <a name="519" href="#519">519</a>       <strong class="jxr_keyword">if</strong>(o == <strong class="jxr_keyword">null</strong>) {
-<a name="520" href="#520">520</a> 	<em class="jxr_comment">//System.out.println("No parent "+substr+" found. Creating ProvisionNode.");</em>
+<a name="520" href="#520">520</a> 	<em class="jxr_comment">////System.out.println("No parent "+substr+" found. Creating ProvisionNode.");</em>
 <a name="521" href="#521">521</a> 	ProvisionNode pn = <strong class="jxr_keyword">new</strong> <a href="../../../org/apache/log4j/ProvisionNode.html">ProvisionNode</a>(cat);
 <a name="522" href="#522">522</a> 	ht.put(key, pn);
 <a name="523" href="#523">523</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong>(o instanceof <a href="../../../org/apache/log4j/Category.html">Category</a>) {
 <a name="524" href="#524">524</a> 	parentFound = <strong class="jxr_keyword">true</strong>;
 <a name="525" href="#525">525</a> 	cat.parent = (Category) o;
-<a name="526" href="#526">526</a> 	<em class="jxr_comment">//System.out.println("Linking " + cat.name + " -&gt; " + ((Category) o).name);</em>
+<a name="526" href="#526">526</a> 	<em class="jxr_comment">////System.out.println("Linking " + cat.name + " -&gt; " + ((Category) o).name);</em>
 <a name="527" href="#527">527</a> 	<strong class="jxr_keyword">break</strong>; <em class="jxr_comment">// no need to update the ancestors of the closest ancestor</em>
 <a name="528" href="#528">528</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong>(o instanceof <a href="../../../org/apache/log4j/ProvisionNode.html">ProvisionNode</a>) {
 <a name="529" href="#529">529</a> 	((ProvisionNode) o).addElement(cat);
@@ -566,12 +566,12 @@
 <a name="556" href="#556">556</a>   <strong class="jxr_keyword">final</strong>
 <a name="557" href="#557">557</a>   <strong class="jxr_keyword">private</strong>
 <a name="558" href="#558">558</a>   <strong class="jxr_keyword">void</strong> updateChildren(<a href="../../../org/apache/log4j/ProvisionNode.html">ProvisionNode</a> pn, <a href="../../../org/apache/log4j/Logger.html">Logger</a> logger) {
-<a name="559" href="#559">559</a>     <em class="jxr_comment">//System.out.println("updateChildren called for " + logger.name);</em>
+<a name="559" href="#559">559</a>     <em class="jxr_comment">////System.out.println("updateChildren called for " + logger.name);</em>
 <a name="560" href="#560">560</a>     <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> last = pn.size();
 <a name="561" href="#561">561</a> 
 <a name="562" href="#562">562</a>     <strong class="jxr_keyword">for</strong>(<strong class="jxr_keyword">int</strong> i = 0; i &lt; last; i++) {
 <a name="563" href="#563">563</a>       <a href="../../../org/apache/log4j/Logger.html">Logger</a> l = (Logger) pn.elementAt(i);
-<a name="564" href="#564">564</a>       <em class="jxr_comment">//System.out.println("Updating child " +p.name);</em>
+<a name="564" href="#564">564</a>       <em class="jxr_comment">////System.out.println("Updating child " +p.name);</em>
 <a name="565" href="#565">565</a> 
 <a name="566" href="#566">566</a>       <em class="jxr_comment">// Unless this child already points to a correct (lower) parent,</em>
 <a name="567" href="#567">567</a>       <em class="jxr_comment">// make cat.parent point to l.parent and l.parent to cat.</em>

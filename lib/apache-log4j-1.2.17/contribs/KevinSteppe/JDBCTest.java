@@ -31,7 +31,7 @@ public class JDBCTest
         catch (Exception e)
         {
             e.printStackTrace();
-            System.out.println(e.toString());
+            //System.out.println(e.toString());
         }
 
 
@@ -91,7 +91,7 @@ public class JDBCTest
         }
         catch (InterruptedException e)
         {
-            System.out.println("Interrupted");
+            //System.out.println("Interrupted");
         }
     }
 }

@@ -190,7 +190,7 @@ public final class PatternParser {
     // conversion word. For example:
     // For "%hello"     lastChar = 'h'
     // For "%-5hello"   lastChar = 'h'
-    //System.out.println("lastchar is "+lastChar);
+    ////System.out.println("lastchar is "+lastChar);
     if (!Character.isUnicodeIdentifierStart(lastChar)) {
       return i;
     }
@@ -203,7 +203,7 @@ public final class PatternParser {
       convBuf.append(pattern.charAt(i));
       currentLiteral.append(pattern.charAt(i));
 
-      //System.out.println("conv buffer is now ["+convBuf+"].");
+      ////System.out.println("conv buffer is now ["+convBuf+"].");
       i++;
     }
 

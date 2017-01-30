@@ -276,7 +276,7 @@ public class SimpleWrapper implements EWrapper {
 	}
 
 	protected static void consoleMsg(String str) {
-		System.out.println(Thread.currentThread().getName() + " (" + tsStr() + "): " + str);
+		//System.out.println(Thread.currentThread().getName() + " (" + tsStr() + "): " + str);
 	}
 
 	protected static String tsStr() {

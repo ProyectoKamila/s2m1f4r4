@@ -5,6 +5,8 @@
  */
 package semaforo;
 
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -24,7 +26,7 @@ public class Settings {
      public final static String REFRESH_TIME="refreshTime";*/
 
     private ArrayList<Ticker> tickers;
-    private Hashtable<String, Integer> mapTickerID = new Hashtable<String, Integer>();
+    public static Hashtable<String, Integer> mapTickerID = new Hashtable<String, Integer>();
     private Hashtable<String, Integer> variables = new Hashtable<String, Integer>();
     
     private int numPos = 0;
@@ -179,7 +181,7 @@ public class Settings {
 
     }
 
-    public void addTicker(String nameTicker) {
+    public void addTicker(String nameTicker) throws SQLException, ParseException {
 
         tickers.add(new Ticker(null, 0.0f, nameTicker));
         mapTickerID.put(nameTicker, mapTickerID.size());
@@ -188,7 +190,7 @@ public class Settings {
     }
 
     public void addTicker(HashMap<Integer, HashMap<String, Double>> weeksValue, String nameTicker) {
-
+       
         if (!mapTickerID.containsKey(nameTicker)) {
             mapTickerID.put(nameTicker, mapTickerID.size());
             tickers.add(new Ticker(weeksValue, 0.0f, nameTicker));
@@ -198,7 +200,7 @@ public class Settings {
 
     }
 
-    public int getTickerID(String name) {
+    public static int getTickerID(String name) {
         return mapTickerID.get(name);
     }
 

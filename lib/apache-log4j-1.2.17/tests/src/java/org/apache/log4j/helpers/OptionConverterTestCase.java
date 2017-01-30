@@ -107,7 +107,7 @@ public class OptionConverterTestCase extends TestCase {
     }
     catch(IllegalArgumentException e) {
       String errorMsg = e.getMessage();
-      //System.out.println('['+errorMsg+']');
+      ////System.out.println('['+errorMsg+']');
       assertEquals('"'+val
 		   + "\" has no closing brace. Opening brace at position 6.", 
 		   errorMsg);
@@ -120,7 +120,7 @@ public class OptionConverterTestCase extends TestCase {
     props.put("p1", "x1");
     props.put("p2", "${p1}");
     String res = OptionConverter.substVars("${p2}", props);
-    System.out.println("Result is ["+res+"].");
+    //System.out.println("Result is ["+res+"].");
     assertEquals(res, "x1");
   }
 

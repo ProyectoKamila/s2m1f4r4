@@ -395,7 +395,7 @@ public class DOMTestCase extends TestCase {
      */
     public void testJarURL() throws IOException {
         File input = new File("input/xml/defaultInit.xml");
-        System.out.println(input.getAbsolutePath());
+        //System.out.println(input.getAbsolutePath());
         InputStream is = new FileInputStream(input);
         File dir = new File("output");
         dir.mkdirs();

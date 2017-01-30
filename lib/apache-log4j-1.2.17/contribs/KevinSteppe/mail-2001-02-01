@@ -238,7 +238,7 @@ public class JDBCTest
         catch (Exception e)
         {
             e.printStackTrace();
-            System.out.println(e.toString());
+            //System.out.println(e.toString());
         }
 
 
@@ -298,7 +298,7 @@ public class JDBCTest
         }
         catch (InterruptedException e)
         {
-            System.out.println("Interrupted");
+            //System.out.println("Interrupted");
         }
     }
 }
@@ -419,7 +419,7 @@ public class JDBCAppender extends org.apache.log4j.AppenderSkeleton
     {
         String msg = this.layout.format(event); 
         String sql = "spLog '" + msg + "'"; 
-        System.out.println(sql); //DEBUG         
+        //System.out.println(sql); //DEBUG         
         return sql;
     }
     
@@ -499,7 +499,7 @@ public class JDBCTest
         catch (Exception e)
         {
             e.printStackTrace();
-            System.out.println(e.toString());    
+            //System.out.println(e.toString());    
         }
         
             Category rootLog = Category.getRoot();
@@ -553,7 +553,7 @@ public class JDBCTest
         }
         catch (InterruptedException e)
         {
-            System.out.println("Interrupted");
+            //System.out.println("Interrupted");
         }
     }
 }

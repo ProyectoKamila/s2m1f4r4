@@ -36,7 +36,7 @@ class ContractDlg extends JDialog {
 
 		m_contractPanel.addKeyListener( new KeyListener() {
 			@Override public void keyTyped(KeyEvent e) {
-				System.out.println( "lkj");
+				//System.out.println( "lkj");
 			}
 			
 			@Override public void keyReleased(KeyEvent e) {

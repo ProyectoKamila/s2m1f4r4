@@ -80,7 +80,7 @@ public class ConsultaIndices {
                 pesoIndice  = peso_DJI;
                 break;
             default:
-                System.out.println("Indice no conocido");
+                //System.out.println("Indice no conocido");
                 break;
         }
         return ObtenerValorIndiceURL(urlIndice, pesoIndice);
@@ -117,17 +117,17 @@ public class ConsultaIndices {
             try {
                 for (int i = 0; i < 17; i++) {
                     if ((line = br.readLine()) != null & i == 2) {
-                        if (semaforo.Semaforo.isDebugMode) System.out.println("= = = " + line);
+                        if (semaforo.Semaforo.isDebugMode) //System.out.println("= = = " + line);
                         nombre = line;
                     }
                     if ((i == 8)) {
-                        if (semaforo.Semaforo.isDebugMode) System.out.println("= = = " + line);
+                        if (semaforo.Semaforo.isDebugMode) //System.out.println("= = = " + line);
                        // cierre = line.split(cvsSplitBy);
                         cierre = line.split(":");
                     }
                 }
             } catch (Exception e) {
-                System.out.println("ObtenerValorIndiceURL ");
+                //System.out.println("ObtenerValorIndiceURL ");
                 e.printStackTrace();
             }
            // cierreStr = cierre[0].split(":")[1];
@@ -161,26 +161,26 @@ public class ConsultaIndices {
         try {
             valorActual = peso * Double.parseDouble(indice[4]);
         } catch (Exception e) {
-            System.out.println("* * * ERROR PARSEANDO valorActual");
+            //System.out.println("* * * ERROR PARSEANDO valorActual");
         }
         try {
             cierreAnterior = peso * Double.parseDouble(cierreStr);
         } catch (Exception e) {
-            System.out.println("* * * ERROR PARSEANDO cierreAnterior");
+            //System.out.println("* * * ERROR PARSEANDO cierreAnterior");
         }
         if (valorActual > cierreAnterior) {
             tendencia = Indice.ALZA;
         } else {
             tendencia = Indice.BAJA;
         }
-        //System.out.println("ACTUAL " + valorActual + "CIERRE " + cierreAnterior + "TEND " + tendencia);
+        ////System.out.println("ACTUAL " + valorActual + "CIERRE " + cierreAnterior + "TEND " + tendencia);
         Indice indiceNuevo = new Indice("", valorActual, tendencia, cierreAnterior);
         return indiceNuevo;
 
     }
 
     public ImageIcon ObtenerImagenIndice(String indice) {
-        if (semaforo.Semaforo.isDebugMode) System.out.println("**************  obtener img ind");
+//        if (semaforo.Semaforo.isDebugMode) System.out.println("**************  obtener img ind");
         String urlIndice = "";
         switch (indice) {
             case "NASDAQ":
@@ -193,7 +193,7 @@ public class ConsultaIndices {
                 urlIndice = pathImagenGrandeDJI;
                 break;
             default:
-                System.out.println("Indice no conocido");
+//                System.out.println("Indice no conocido");
                 break;
         }
         return ObtenerImgIndiceURL(urlIndice, tamanyoImgIndice);
@@ -217,7 +217,7 @@ public class ConsultaIndices {
     }
 
     public BufferedImage createResizedCopy(Image originalImage, int scaledWidth, int scaledHeight, boolean preserveAlpha) {
-        if (semaforo.Semaforo.isDebugMode) System.out.println("resizing...");
+       // if (semaforo.Semaforo.isDebugMode) System.out.println("resizing...");
         int imageType = preserveAlpha ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
         BufferedImage scaledBI = new BufferedImage(scaledWidth, scaledHeight, imageType);
         Graphics2D g = scaledBI.createGraphics();

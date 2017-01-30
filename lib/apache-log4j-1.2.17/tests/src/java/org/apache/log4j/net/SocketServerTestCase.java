@@ -90,11 +90,11 @@ public class SocketServerTestCase extends TestCase {
   }
 
   public void setUp() {
-    System.out.println("Setting up test case.");
+    //System.out.println("Setting up test case.");
   }
   
   public void tearDown() {
-    System.out.println("Tearing down test case.");
+    //System.out.println("Tearing down test case.");
     socketAppender = null;
     rootLogger.removeAllAppenders();
   }

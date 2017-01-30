@@ -113,9 +113,9 @@ public class AppenderTable extends JTable {
 
     long totalTime = (after-before);
     
-    System.out.println("Total time :"+totalTime+ " milliseconds for "+
+    //System.out.println("Total time :"+totalTime+ " milliseconds for "+
 		       "runLength insertions.");
-    System.out.println("Average time per insertion :"
+    //System.out.println("Average time per insertion :"
 		       +(totalTime*1000/runLength)+ " micro-seconds.");
 
 

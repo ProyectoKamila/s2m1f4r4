@@ -23,7 +23,7 @@ public class LogFile {
         BufferedWriter out = null;
         try {
             java.util.Date fecha = new Date();
-            //System.out.println (fecha);
+            ////System.out.println (fecha);
             //create a temporary file
             String timeLog = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
             //File logFile = new File(timeLog);

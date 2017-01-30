@@ -52,10 +52,10 @@ public class ListVsVector {
     c.next = new Chain("eee");
     double t;
     t = loopChain();
-    System.out.println("Looping thourgh the chain took " + t);
+    //System.out.println("Looping thourgh the chain took " + t);
 
     t = loopVector();
-    System.out.println("Looping thourgh the vector took " + t);
+    //System.out.println("Looping thourgh the vector took " + t);
 
   }
 

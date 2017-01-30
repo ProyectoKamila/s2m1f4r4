@@ -82,7 +82,7 @@ public class JListView extends JList {
   /*
   public
   Dimension getPreferredSize() {
-    System.out.println("getPreferredSize() called");
+    //System.out.println("getPreferredSize() called");
     return super.getPreferredSize();
   }
 
@@ -90,7 +90,7 @@ public class JListView extends JList {
   public
   int getScrollableUnitIncrement(Rectangle visibleRect, int orientation,
 				 int direction) {
-    System.out.println("getScrollableUnitIncrement called with " + visibleRect +
+    //System.out.println("getScrollableUnitIncrement called with " + visibleRect +
 		       "orientation: "+orientation+", direction: "+direction);
     return super.getScrollableUnitIncrement(visibleRect, orientation, 
     				    direction);
@@ -99,7 +99,7 @@ public class JListView extends JList {
   public
   int getScrollableBlockIncrement(Rectangle visibleRect, int orientation,
 				  int direction) {
-    System.out.println("getScrollableBlockIncrement called with " + 
+    //System.out.println("getScrollableBlockIncrement called with " + 
 		       visibleRect + "orientation: "+orientation+
 		       ", direction: "+direction);
     return super.getScrollableBlockIncrement(visibleRect, orientation, 
@@ -109,26 +109,26 @@ public class JListView extends JList {
 
   //public
   //boolean getScrollableTracksViewportWidth() {
-  //System.out.println("getScrollableTracksViewportWidth called.");
+  ////System.out.println("getScrollableTracksViewportWidth called.");
   //return true;
     //boolean b = super.getScrollableTracksViewportWidth();
-    //System.out.println("result is: "+b);
+    ////System.out.println("result is: "+b);
     //return b;
   //}
   
   //public
   //boolean getScrollableTracksViewportHeight() { 
-  // System.out.println("getScrollableTracksViewportHeight called.");
+  // //System.out.println("getScrollableTracksViewportHeight called.");
   // return true;
      //boolean b = super.getScrollableTracksViewportHeight();
-     //System.out.println("result is: "+b);
+     ////System.out.println("result is: "+b);
      //return b;
   //}
 
   //public 
   //int getFirstVisibleIndex() {
   //int r = getFirstVisibleIndex(); 
-  // System.out.println("----------getFirstVisibleIndex called, result: "+r);
+  // //System.out.println("----------getFirstVisibleIndex called, result: "+r);
   //return r;
   //}
 
@@ -208,7 +208,7 @@ public class JListView extends JList {
     }
 
     long after = System.currentTimeMillis();
-    System.out.println("Time taken :"+ ((after-before)*1000/RUN));
+    //System.out.println("Time taken :"+ ((after-before)*1000/RUN));
 
   }
 
@@ -220,7 +220,7 @@ public class JListView extends JList {
 
     public
     MyCellRenderer() {
-      System.out.println("----------------------");
+      //System.out.println("----------------------");
       
     }
 
@@ -237,7 +237,7 @@ public class JListView extends JList {
       URL url = ClassLoader.getSystemResource(path);
       img = (Image) (Toolkit.getDefaultToolkit()).getImage(url);
     } catch (Exception e) {
-      System.out.println("Exception occured: " + e.getMessage() + 
+      //System.out.println("Exception occured: " + e.getMessage() + 
 			 " - " + e );   
     }	
     return (img);
@@ -249,7 +249,7 @@ public class JListView extends JList {
 						boolean isSelected, 
 						boolean cellHasFocus) {
 
-      //      System.out.println(o + " ============== " + i++);
+      //      //System.out.println(o + " ============== " + i++);
       //LogLog.error("=======", new Exception());
       //setIcon(longIcon);
       if(value instanceof LoggingEvent) {
@@ -285,7 +285,7 @@ class JListViewModel extends AbstractListModel {
 
   public
   void add(LoggingEvent event) {
-    //System.out.println("JListViewModel.add called");
+    ////System.out.println("JListViewModel.add called");
     cb.add(event);
     int j = cb.length();
     fireContentsChanged(this, 0, j);
@@ -319,7 +319,7 @@ class AddAction implements ActionListener {
     
   public
   void actionPerformed(ActionEvent e) {
-    System.out.println("Action occured");
+    //System.out.println("Action occured");
     synchronized(t) {
       t.notify();
     }

@@ -55,17 +55,17 @@
 <a name="45" href="#45">45</a>        lineCounter++;
 <a name="46" href="#46">46</a>        String s2 = in2.readLine();
 <a name="47" href="#47">47</a>        <strong class="jxr_keyword">if</strong>(!s1.equals(s2)) {
-<a name="48" href="#48">48</a>  	System.out.println(<span class="jxr_string">"Files ["</span>+file1+<span class="jxr_string">"] and ["</span>+file2+<span class="jxr_string">"] differ on line "</span> 
+<a name="48" href="#48">48</a>  	//System.out.println(<span class="jxr_string">"Files ["</span>+file1+<span class="jxr_string">"] and ["</span>+file2+<span class="jxr_string">"] differ on line "</span> 
 <a name="49" href="#49">49</a>  			   +lineCounter);
-<a name="50" href="#50">50</a>  	System.out.println(<span class="jxr_string">"One reads:  ["</span>+s1+<span class="jxr_string">"]."</span>);
-<a name="51" href="#51">51</a>  	System.out.println(<span class="jxr_string">"Other reads:["</span>+s2+<span class="jxr_string">"]."</span>);
+<a name="50" href="#50">50</a>  	//System.out.println(<span class="jxr_string">"One reads:  ["</span>+s1+<span class="jxr_string">"]."</span>);
+<a name="51" href="#51">51</a>  	//System.out.println(<span class="jxr_string">"Other reads:["</span>+s2+<span class="jxr_string">"]."</span>);
 <a name="52" href="#52">52</a>  	<strong class="jxr_keyword">return</strong> false;
 <a name="53" href="#53">53</a>        }
 <a name="54" href="#54">54</a>      }
 <a name="55" href="#55">55</a>      
 <a name="56" href="#56">56</a>      <em class="jxr_comment">// the second file is longer</em>
 <a name="57" href="#57">57</a>      <strong class="jxr_keyword">if</strong>(in2.read() != -1) {
-<a name="58" href="#58">58</a>        System.out.println(<span class="jxr_string">"File ["</span>+file2+<span class="jxr_string">"] longer than file ["</span>+file1+<span class="jxr_string">"]."</span>);
+<a name="58" href="#58">58</a>        //System.out.println(<span class="jxr_string">"File ["</span>+file2+<span class="jxr_string">"] longer than file ["</span>+file1+<span class="jxr_string">"]."</span>);
 <a name="59" href="#59">59</a>        <strong class="jxr_keyword">return</strong> false;
 <a name="60" href="#60">60</a>      }
 <a name="61" href="#61">61</a>      
@@ -119,11 +119,11 @@
 <a name="109" href="#109">109</a>       String s2 = in2.readLine();
 <a name="110" href="#110">110</a> 
 <a name="111" href="#111">111</a>       <strong class="jxr_keyword">if</strong> (!s1.equals(s2)) {
-<a name="112" href="#112">112</a>         System.out.println(
+<a name="112" href="#112">112</a>         //System.out.println(
 <a name="113" href="#113">113</a>           <span class="jxr_string">"Files ["</span> + file1 + <span class="jxr_string">"] and ["</span> + file2 + <span class="jxr_string">"] differ on line "</span>
 <a name="114" href="#114">114</a>           + lineCounter);
-<a name="115" href="#115">115</a>         System.out.println(<span class="jxr_string">"One reads:  ["</span> + s1 + <span class="jxr_string">"]."</span>);
-<a name="116" href="#116">116</a>         System.out.println(<span class="jxr_string">"Other reads:["</span> + s2 + <span class="jxr_string">"]."</span>);
+<a name="115" href="#115">115</a>         //System.out.println(<span class="jxr_string">"One reads:  ["</span> + s1 + <span class="jxr_string">"]."</span>);
+<a name="116" href="#116">116</a>         //System.out.println(<span class="jxr_string">"Other reads:["</span> + s2 + <span class="jxr_string">"]."</span>);
 <a name="117" href="#117">117</a>         outputFile(testClass, file1);
 <a name="118" href="#118">118</a>         outputFile(testClass, file2);
 <a name="119" href="#119">119</a> 
@@ -133,7 +133,7 @@
 <a name="123" href="#123">123</a> 
 <a name="124" href="#124">124</a>     <em class="jxr_comment">// the second file is longer</em>
 <a name="125" href="#125">125</a>     <strong class="jxr_keyword">if</strong> (in2.read() != -1) {
-<a name="126" href="#126">126</a>       System.out.println(
+<a name="126" href="#126">126</a>       //System.out.println(
 <a name="127" href="#127">127</a>         <span class="jxr_string">"File ["</span> + file2 + <span class="jxr_string">"] longer than file ["</span> + file1 + <span class="jxr_string">"]."</span>);
 <a name="128" href="#128">128</a>       outputFile(testClass, file1);
 <a name="129" href="#129">129</a>       outputFile(testClass, file2);
@@ -156,24 +156,24 @@
 <a name="146" href="#146">146</a> 
 <a name="147" href="#147">147</a>     String s1;
 <a name="148" href="#148">148</a>     <strong class="jxr_keyword">int</strong> lineCounter = 0;
-<a name="149" href="#149">149</a>     System.out.println(<span class="jxr_string">"--------------------------------"</span>);
-<a name="150" href="#150">150</a>     System.out.println(<span class="jxr_string">"Contents of "</span> + file + <span class="jxr_string">":"</span>);
+<a name="149" href="#149">149</a>     //System.out.println(<span class="jxr_string">"--------------------------------"</span>);
+<a name="150" href="#150">150</a>     //System.out.println(<span class="jxr_string">"Contents of "</span> + file + <span class="jxr_string">":"</span>);
 <a name="151" href="#151">151</a> 
 <a name="152" href="#152">152</a>     <strong class="jxr_keyword">while</strong> ((s1 = in1.readLine()) != <strong class="jxr_keyword">null</strong>) {
 <a name="153" href="#153">153</a>       lineCounter++;
-<a name="154" href="#154">154</a>       System.out.print(lineCounter);
+<a name="154" href="#154">154</a>       //System.out.print(lineCounter);
 <a name="155" href="#155">155</a> 
 <a name="156" href="#156">156</a>       <strong class="jxr_keyword">if</strong> (lineCounter &lt; 10) {
-<a name="157" href="#157">157</a>         System.out.print(<span class="jxr_string">"   : "</span>);
+<a name="157" href="#157">157</a>         //System.out.print(<span class="jxr_string">"   : "</span>);
 <a name="158" href="#158">158</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (lineCounter &lt; 100) {
-<a name="159" href="#159">159</a>         System.out.print(<span class="jxr_string">"  : "</span>);
+<a name="159" href="#159">159</a>         //System.out.print(<span class="jxr_string">"  : "</span>);
 <a name="160" href="#160">160</a>       } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (lineCounter &lt; 1000) {
-<a name="161" href="#161">161</a>         System.out.print(<span class="jxr_string">" : "</span>);
+<a name="161" href="#161">161</a>         //System.out.print(<span class="jxr_string">" : "</span>);
 <a name="162" href="#162">162</a>       } <strong class="jxr_keyword">else</strong> {
-<a name="163" href="#163">163</a>         System.out.print(<span class="jxr_string">": "</span>);
+<a name="163" href="#163">163</a>         //System.out.print(<span class="jxr_string">": "</span>);
 <a name="164" href="#164">164</a>       }
 <a name="165" href="#165">165</a> 
-<a name="166" href="#166">166</a>       System.out.println(s1);
+<a name="166" href="#166">166</a>       //System.out.println(s1);
 <a name="167" href="#167">167</a>     }
 <a name="168" href="#168">168</a>     in1.close();
 <a name="169" href="#169">169</a>   }

@@ -97,7 +97,7 @@ public class LogLog {
   static
   void debug(String msg) {
     if(debugEnabled && !quietMode) {
-      System.out.println(PREFIX+msg);
+      //System.out.println(PREFIX+msg);
     }
   }
 
@@ -109,7 +109,7 @@ public class LogLog {
   static
   void debug(String msg, Throwable t) {
     if(debugEnabled && !quietMode) {
-      System.out.println(PREFIX+msg);
+      //System.out.println(PREFIX+msg);
       if(t != null)
 	t.printStackTrace(System.out);
     }

@@ -154,10 +154,10 @@
 <a name="144" href="#144">144</a> <em class="jxr_javadoccomment"> */</em>
 <a name="145" href="#145">145</a>   <strong class="jxr_keyword">public</strong>
 <a name="146" href="#146">146</a>   <a href="../../../../org/apache/log4j/or/ObjectRenderer.html">ObjectRenderer</a> get(Class clazz) {
-<a name="147" href="#147">147</a>     <em class="jxr_comment">//System.out.println("\nget: "+clazz);</em>
+<a name="147" href="#147">147</a>     <em class="jxr_comment">////System.out.println("\nget: "+clazz);</em>
 <a name="148" href="#148">148</a>     <a href="../../../../org/apache/log4j/or/ObjectRenderer.html">ObjectRenderer</a> r = <strong class="jxr_keyword">null</strong>;
 <a name="149" href="#149">149</a>     <strong class="jxr_keyword">for</strong>(Class c = clazz; c != <strong class="jxr_keyword">null</strong>; c = c.getSuperclass()) {
-<a name="150" href="#150">150</a>       <em class="jxr_comment">//System.out.println("Searching for class: "+c);</em>
+<a name="150" href="#150">150</a>       <em class="jxr_comment">////System.out.println("Searching for class: "+c);</em>
 <a name="151" href="#151">151</a>       r = (ObjectRenderer) map.get(c);
 <a name="152" href="#152">152</a>       <strong class="jxr_keyword">if</strong>(r != <strong class="jxr_keyword">null</strong>) {
 <a name="153" href="#153">153</a> 	<strong class="jxr_keyword">return</strong> r;
@@ -170,7 +170,7 @@
 <a name="160" href="#160">160</a>   }
 <a name="161" href="#161">161</a> 
 <a name="162" href="#162">162</a>   <a href="../../../../org/apache/log4j/or/ObjectRenderer.html">ObjectRenderer</a> searchInterfaces(Class c) {
-<a name="163" href="#163">163</a>     <em class="jxr_comment">//System.out.println("Searching interfaces of class: "+c);</em>
+<a name="163" href="#163">163</a>     <em class="jxr_comment">////System.out.println("Searching interfaces of class: "+c);</em>
 <a name="164" href="#164">164</a> 
 <a name="165" href="#165">165</a>     <a href="../../../../org/apache/log4j/or/ObjectRenderer.html">ObjectRenderer</a> r = (ObjectRenderer) map.get(c);
 <a name="166" href="#166">166</a>     <strong class="jxr_keyword">if</strong>(r != <strong class="jxr_keyword">null</strong>) {

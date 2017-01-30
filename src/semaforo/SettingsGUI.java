@@ -18,6 +18,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -284,7 +286,7 @@ public class SettingsGUI extends javax.swing.JFrame {
                                     ShowMessage("Sorry, the ticker " + ticker + " has not been found.");
 //                                    JOptionPane.showMessageDialog(frame,
 //                                            "Sorry, the ticker " + ticker + " has not been found.");
-                                    System.out.println("HOLLLLLLLLLLLLLLAAAAAX PAPAX");
+                                    //System.out.println("HOLLLLLLLLLLLLLLAAAAAX PAPAX");
                                     //  ButtonEditTicker.setEnabled(true);
                                     ButtonSaveTicker.setEnabled(false);
                                     ButtonAddTicker.setEnabled(true);
@@ -307,12 +309,7 @@ public class SettingsGUI extends javax.swing.JFrame {
             }
         };
 
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                open = true;
-            }
-        });
+        
 
         TableTickers.setRowHeight(30);
         TableTickers.setFont(new Font("Arial", Font.BOLD, 14));
@@ -401,6 +398,11 @@ public class SettingsGUI extends javax.swing.JFrame {
         ButtonSaveChangesVars = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         PanelTickers.setBackground(new java.awt.Color(0, 0, 0));
         PanelTickers.setBorder(javax.swing.BorderFactory.createTitledBorder("Tickers"));
@@ -603,8 +605,7 @@ public class SettingsGUI extends javax.swing.JFrame {
     }
 
     private void addTicker(int pos) {
-        final DefaultTableModel model = (DefaultTableModel) TableTickers.getModel();
-
+        final DefaultTableModel model = (DefaultTableModel) TableTickers.getModel(); 
         if (TableTickers.isEditing()) {
             TableTickers.getCellEditor().stopCellEditing();
         }
@@ -625,7 +626,13 @@ public class SettingsGUI extends javax.swing.JFrame {
 
                     listener.stopThread();
 
-                    settings.addTicker(ticker_name.toUpperCase().trim());
+                    try {
+                        settings.addTicker(ticker_name.toUpperCase().trim());
+                    } catch (SQLException ex) {
+                        Logger.getLogger(SettingsGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(SettingsGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     DDBB.insertTicker(ticker_name.toUpperCase().trim());
                     listener.addTickers();
                 }
@@ -649,7 +656,7 @@ public class SettingsGUI extends javax.swing.JFrame {
         //selectedRow = ((auxPos = TableTickers.getEditingRow()) > -1) ? auxPos : selectedRow;
 
         final String tickerName = (String) TableTickers.getValueAt(selectedRow, 0);
-
+            
         if ((action & ADD) == ADD) {
             addTicker(selectedRow);
         } else if ((action & EDIT) == EDIT) {
@@ -670,8 +677,8 @@ public class SettingsGUI extends javax.swing.JFrame {
     private void ButtonSaveTickerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonSaveTickerActionPerformed
         // TODO add your handling code here:
         //  Controller.setup();
+        KobyTest.newTicker = true;
         save();
-
         noEditableTickers();
         selectedRow = -1;
     }//GEN-LAST:event_ButtonSaveTickerActionPerformed
@@ -896,6 +903,33 @@ public class SettingsGUI extends javax.swing.JFrame {
             loadingDialog.setVisible(false);
         }
     }//GEN-LAST:event_ButtonCancelTickerActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        Semaforo.seguir = true;
+        dispose();
+        open = true;
+                if(Semaforo.newLboleano){
+                    try {
+                        Semaforo.newL = new newLow();
+                    } catch (SQLException ex) {
+                        Logger.getLogger(SettingsGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    Semaforo.newL.setVisible(true);
+                    Semaforo.newLboleano=true;
+                }
+                
+                
+                if(Semaforo.newHboleano){
+                    try {
+                        Semaforo.newH = new newHigh();
+                    } catch (SQLException ex) {
+                        Logger.getLogger(SettingsGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    Semaforo.newH.setVisible(true);
+                    Semaforo.newHboleano=true;
+                }
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments

@@ -96,11 +96,11 @@ class StressCategory {
   public
   static
   void permutationDump() {
-    System.out.print("Current permutation is - ");
+    //System.out.print("Current permutation is - ");
     for(int i = 0; i < LENGTH; i++) {
-      System.out.print(names[i] + " ");
+      //System.out.print(names[i] + " ");
     }
-    System.out.println();
+    //System.out.println();
   }
 
 
@@ -110,7 +110,7 @@ class StressCategory {
   static
   void createLoop(int n) {
     if(n == LENGTH) {  
-      //System.out.println("..............Creating cat[]...........");
+      ////System.out.println("..............Creating cat[]...........");
       for(int i = 0; i < LENGTH; i++) {
 	if(ct[i] == null)
 	  cat[i] = null;
@@ -140,13 +140,13 @@ class StressCategory {
 
   static
   void test() {    
-    //System.out.println("++++++++++++TEST called+++++++++++++");
+    ////System.out.println("++++++++++++TEST called+++++++++++++");
     //permutationDump();
     //catDump();
 
     for(int i = 0; i < LENGTH; i++) {
       if(!checkCorrectness(i)) {
-	System.out.println("Failed stress test.");
+	//System.out.println("Failed stress test.");
 	permutationDump();
 	
 	//Hierarchy._default.fullDump();
@@ -161,10 +161,10 @@ class StressCategory {
   void ctDump() {
     for(int j = 0; j < LENGTH; j++) {
        if(ct[j] != null) 
-	    System.out.println("ct [" + j + "] = ("+ct[j].catstr+"," + 
+	    //System.out.println("ct [" + j + "] = ("+ct[j].catstr+"," + 
 			       ct[j].level + ")");
        else 
-	 System.out.println("ct [" + j + "] = undefined");
+	 //System.out.println("ct [" + j + "] = undefined");
     }
   }
   
@@ -172,10 +172,10 @@ class StressCategory {
   void catDump() {
     for(int j = 0; j < LENGTH; j++) {
       if(cat[j] != null)
-	System.out.println("cat[" + j + "] = (" + cat[j].name + "," +
+	//System.out.println("cat[" + j + "] = (" + cat[j].name + "," +
 			   cat[j].getLevel() + ")");
       else
-	System.out.println("cat[" + j + "] = undefined"); 
+	//System.out.println("cat[" + j + "] = undefined"); 
     }
   }
 
@@ -204,9 +204,9 @@ class StressCategory {
     Level purported = cat[i].getEffectiveLevel();
 
     if(expected != purported) {
-      System.out.println("Expected level for " + localCT.catstr + " is " +
+      //System.out.println("Expected level for " + localCT.catstr + " is " +
 		       expected);
-      System.out.println("Purported level for "+ cat[i].name + " is "+purported);
+      //System.out.println("Purported level for "+ cat[i].name + " is "+purported);
       return false;
     }
     return true;

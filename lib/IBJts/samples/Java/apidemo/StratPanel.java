@@ -132,7 +132,7 @@ public class StratPanel extends StackPanel implements IHistoricalDataHandler, IR
 	TreeMap<Long,Bar> m_map = new TreeMap<Long,Bar>();
 	
 	@Override public void historicalData(Bar bar, boolean hasGaps) {
-		System.out.println( bar);
+		//System.out.println( bar);
 		addBar( bar);
 	}
 

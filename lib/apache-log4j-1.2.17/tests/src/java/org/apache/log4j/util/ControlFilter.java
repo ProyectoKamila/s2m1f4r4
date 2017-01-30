@@ -33,9 +33,9 @@ public class ControlFilter implements Filter {
   String filter(String in) throws UnexpectedFormatException{
     int len = allowedPatterns.length;
     for(int i = 0; i < len; i++) {
-      //System.out.println("["+allowedPatterns[i]+"]");
+      ////System.out.println("["+allowedPatterns[i]+"]");
       if(util.match("/"+allowedPatterns[i]+"/", in)) {
-	//System.out.println("["+in+"] matched ["+allowedPatterns[i]);
+	////System.out.println("["+in+"] matched ["+allowedPatterns[i]);
 	return in;
       }	
     }

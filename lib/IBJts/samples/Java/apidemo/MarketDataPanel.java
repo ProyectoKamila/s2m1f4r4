@@ -242,7 +242,7 @@ public class MarketDataPanel extends JPanel {
 						}
 						else {
 							// this happens but seems to be harmless
-							// System.out.println( "can't remove " + pos);
+							// //System.out.println( "can't remove " + pos);
 						}
 						fireTableRowsDeleted(pos, pos);
 						break;
